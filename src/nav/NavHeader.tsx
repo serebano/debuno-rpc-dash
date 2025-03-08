@@ -1,6 +1,4 @@
-import { host, origin, readyStateKey } from "@signals/sse.ts";
 import Icon from "../icons/icon.tsx";
-import DotIcon from "../icons/DotIcon.tsx";
 
 const iconProps = {
   size: 22,
@@ -16,18 +14,7 @@ export default function NavHeader() {
   return (
     <div class="nav-header">
       <Icon {...iconProps} />
-      {
-        /* <a
-        class="origin"
-        href={origin.value}
-        target="_blank"
-        title={origin.value}
-      >
-        {host.value}
-      </a> */
-      }
       <div style={{ flex: "auto" }}></div>
-      {/* <DotIcon state={readyStateKey.value} size={16} /> */}
     </div>
   );
 }

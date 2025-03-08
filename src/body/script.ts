@@ -1,5 +1,5 @@
 // deno-lint-ignore-file no-window
-import type { RequestLocation } from "@lib/RequestLocation.ts";
+import type { RequestLocation } from "@utils/RequestLocation.ts";
 import { importFile, linkImports, replaceImportAndExportPathsWithLinks } from "../utils/mod.ts";
 
 export function script(loc: RequestLocation) {

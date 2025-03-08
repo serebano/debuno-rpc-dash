@@ -1,5 +1,4 @@
 import { computed } from "@preact/signals";
-// import config from "@lib/config.ts";
 import * as $ from "@signals";
 import type { NavigationState } from "./types.ts";
 

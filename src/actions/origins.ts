@@ -2,7 +2,6 @@ import origins, { type Origins } from "@signals/origins.ts";
 import { getChanges } from "@utils";
 import { removeOriginFiles } from "@actions";
 import { xurl } from "@signals";
-import X from "https://esm.sh/highlight.js@11.11.1/lib/languages/typescript";
 
 export function getOrigins() {
     return origins.value

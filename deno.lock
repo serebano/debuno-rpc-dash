@@ -2810,7 +2810,9 @@
     "https://esm.sh/highlight.js@11.11.1/denonext/lib/languages/plaintext.mjs": "73945ae63b57a578e3490e38dbd18b6411422413aa10dbe9de15bd8033a7bfc1",
     "https://esm.sh/highlight.js@11.11.1/denonext/lib/languages/typescript.mjs": "4d1951442537f483c1734013c90b193b057e35114c81de99c4269ad8ff9dfea1",
     "https://esm.sh/highlight.js@11.11.1/denonext/lib/languages/xml.mjs": "6bc848e84048bb8152b9b1782585ce5c6c4f5d75489f2ce68aadaf6f1351a6be",
+    "https://esm.sh/highlight.js@11.11.1/lib/core": "8c8269fa2c82cb7197fd3561409007436f86ec38fe2f0f473f64e62a60eea89d",
     "https://esm.sh/highlight.js@11.11.1/lib/languages/bash": "2c99cfc7f7047ff67427bdfe2f62bf20c3e7ec6f088fbae1ab140d9070bebfcb",
+    "https://esm.sh/highlight.js@11.11.1/lib/languages/css": "4231851ca23b478574f810ad4afce0d66ac01c4fa4ede3e877667e23bfcbfe20",
     "https://esm.sh/highlight.js@11.11.1/lib/languages/javascript": "cce5a6debfebaaceed1073b10f83701cbf98dcf48cf08f291c2cc0af48d13837",
     "https://esm.sh/highlight.js@11.11.1/lib/languages/json": "d7426be746ddba9ad385d3fca125389f70e7cdf5d56d04fa9789270a7e520ff3",
     "https://esm.sh/highlight.js@11.11.1/lib/languages/markdown": "b098c64117d55b7e0ae4c55944d84fb15404be97a702e697d57b1fd3ef1ce8d9",
@@ -2824,7 +2826,6 @@
       "npm:@preact/preset-vite@^2.10.1",
       "npm:@preact/signals@^2.0.1",
       "npm:preact@^10.26.2",
-      "npm:vite-plugin-pwa@~0.21.1",
       "npm:vite@^6.1.1"
     ]
   }

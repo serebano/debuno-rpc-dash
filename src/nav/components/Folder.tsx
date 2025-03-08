@@ -38,7 +38,11 @@ export function Folder(
       <b
         style={{ position: "absolute", right: "7px", top: "0px", opacity: 0.6 }}
       >
-        <DotIcon state={eventSourcesState.value[`http://${name}`]} size={10} />
+        <DotIcon
+          state={eventSourcesState.value[`http://${name}`] ||
+            eventSourcesState.value[`https://${name}`]}
+          size={10}
+        />
       </b>
     )
     : "";

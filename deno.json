@@ -21,13 +21,11 @@
     "jsxImportSource": "preact"
   },
   "imports": {
-    "vite-plugin-pwa": "npm:vite-plugin-pwa@^0.21.1",
     "@deno/vite-plugin": "npm:@deno/vite-plugin@^1.0.4",
     "@preact/preset-vite": "npm:@preact/preset-vite@^2.10.1",
     "@preact/signals": "npm:@preact/signals@^2.0.1",
     "preact": "npm:preact@^10.26.2",
     "vite": "npm:vite@^6.1.1",
-    "@lib/": "/Users/serebano/dev/create-debuno-tmp/rpc-1/lib/",
     "@signals": "./src/signals.ts",
     "@signals/": "./src/signals/",
     "@actions": "./src/actions.ts",
@@ -35,6 +33,7 @@
     "@utils": "./src/utils.ts",
     "@utils/": "./src/utils/",
     "@xurl/": "./src/xurl/",
+    "@config": "./src/config.ts",
     "@xurl": "./src/xurl/mod.ts"
   },
   "lint": {

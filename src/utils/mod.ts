@@ -1,4 +1,4 @@
-import type { RequestLocation } from "@lib/RequestLocation.ts";
+import type { RequestLocation } from "@utils/RequestLocation.ts";
 import type { XURL } from "@xurl/XURL.ts";
 
 export function getChanges(oldArray: string[], newArray: string[]): { added: string[]; removed: string[]; } {
@@ -77,10 +77,10 @@ export function getSubUrl(url: string | URL | Location): URL {
             return new URL(origin + pathname + url.search + url.hash);
         } catch (e) {
             console.error(e);
-            return new URL(`${protocol}//blank`);
+            return new URL(`${protocol}//error`);
         }
     } else {
-        return new URL(`${protocol}//blank`);
+        return new URL(`${protocol}//index`);
     }
 }
 

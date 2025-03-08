@@ -8,9 +8,9 @@ import xml from "https://esm.sh/highlight.js@11.11.1/lib/languages/xml";
 import bash from "https://esm.sh/highlight.js@11.11.1/lib/languages/bash";
 import markdown from "https://esm.sh/highlight.js@11.11.1/lib/languages/markdown";
 
-import type { RequestLocation } from "@lib/RequestLocation.ts";
-import { linkImports } from "../utils/mod.ts";
-import config from "@lib/config.ts";
+import type { RequestLocation } from "@utils/RequestLocation.ts";
+import { linkImports } from "@utils";
+import config from "@config";
 
 // Then register the languages you need
 hljs.registerLanguage('ts', typescript);
