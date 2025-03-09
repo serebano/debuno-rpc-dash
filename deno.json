@@ -15,7 +15,8 @@
       "ES2020",
       "DOM",
       "DOM.Iterable",
-      "deno.window"
+      "deno.window",
+      "webworker"
     ],
     "jsx": "react-jsx",
     "jsxImportSource": "preact"

@@ -11,6 +11,7 @@ import markdown from "https://esm.sh/highlight.js@11.11.1/lib/languages/markdown
 import type { RequestLocation } from "@utils/RequestLocation.ts";
 import { linkImports } from "@utils";
 import config from "@config";
+import { xurl } from "@signals";
 
 // Then register the languages you need
 hljs.registerLanguage('ts', typescript);
@@ -43,9 +44,11 @@ function wrapLines(sourceCode: string, loc: RequestLocation): string {
 }
 
 function createLineNumbers(sourceCode: string, { path, lineNumber, columnNumber }: RequestLocation): string {
+    const gotoPath = xurl.origin + path
     return sourceCode
         .split("\n")
-        .map((_str, idx) => `<a id="lnr-${idx + 1}" title="Go to line ${idx + 1}" onclick='fetch("/open:${path}:${idx === lineNumber - 1 ? [lineNumber, columnNumber].join(':') : idx + 1}"); return false;' class="${idx === lineNumber - 1 ? 'selected' : ''}">${idx + 1}</a>`)
+        // .map((_str, idx) => `<a id="lnr-${idx + 1}" title="Go to line ${idx + 1}" onclick='fetch("/open:${path}:${idx === lineNumber - 1 ? [lineNumber, columnNumber].join(':') : idx + 1}"); return false;' class="${idx === lineNumber - 1 ? 'selected' : ''}">${idx + 1}</a>`)
+        .map((_str, idx) => `<a id="lnr-${idx + 1}" title="Open ${path}:${idx + 1}" onclick='goto("${gotoPath}:${idx + 1}", ${idx + 1}).open(); return false;' class="${idx === lineNumber - 1 ? 'selected' : ''}">${idx + 1}</a>`)
         .join("\n");
 }
 

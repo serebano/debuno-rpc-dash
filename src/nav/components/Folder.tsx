@@ -36,7 +36,7 @@ export function Folder(
   const dot = depth === 0
     ? (
       <b
-        style={{ position: "absolute", right: "7px", top: "0px", opacity: 0.6 }}
+        style={{ position: "absolute", right: "8px", top: "0px", opacity: 0.6 }}
       >
         <DotIcon
           state={eventSourcesState.value[`http://${name}`] ||

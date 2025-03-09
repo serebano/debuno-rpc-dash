@@ -1,5 +1,9 @@
 import type { Signal, ReadonlySignal } from "@preact/signals";
 import type { XURL } from "./XURL.ts";
+import type config from "@config";
+
+export type XURLDir = typeof config.srcKey | typeof config.outKey
+export type XURLExt = 'ts' | 'js'
 
 export interface XURLType {
     protocol: string;
@@ -11,39 +15,31 @@ export interface XURLType {
     search: string;
     hash: string;
     href: string;
+    path: string;
+    line: number | undefined;
+    column: number | undefined;
+    dir: XURLDir;
+    ext: XURLExt;
     // state: "pop" | "push"
-    get searchParams(): URLSearchParams;
+    searchParams: URLSearchParams;
+    params: Record<string, any>
 }
 
 export interface XURLSubFunc {
     <P extends keyof XURLType, V extends XURLType[P]>(prop: P, value: V, ctx: XURL): void
 }
 
-export interface XURLSubMap {
-    protocol?: (value: string, ctx: XURL) => void;
-    port?: (value: string, ctx: XURL) => void;
-    hostname?: (value: string, ctx: XURL) => void;
-    host?: (value: string, ctx: XURL) => void;
-    origin?: (value: string, ctx: XURL) => void;
-    pathname?: (value: string, ctx: XURL) => void;
-    search?: (value: string, ctx: XURL) => void;
-    searchParams?: (value: URLSearchParams, ctx: XURL) => void;
-    hash?: (value: string, ctx: XURL) => void;
-    href?: (value: string, ctx: XURL) => void;
+export type XURLSubMap = {
+    [P in keyof XURLType]?: (value: XURLType[P], ctx: XURL) => void;
+} & {
     state?: (value: 'push' | 'pop', ctx: XURL) => void
     any?: XURLSubFunc
 }
 
-export interface XURLSignals {
-    protocol: Signal<string>;
-    port: Signal<string>;
-    hostname: Signal<string>;
-    host: ReadonlySignal<string>;
-    origin: ReadonlySignal<string>;
-    pathname: Signal<string>;
-    search: Signal<string>;
-    hash: Signal<string>;
-    href: ReadonlySignal<string>;
-    searchParams: ReadonlySignal<URLSearchParams>;
+export type ReadonlySignals = 'host' | 'origin' | 'href' | 'searchParams' | 'params' | 'dir' | 'ext'
+
+export type XURLSignals = {
+    [P in keyof XURLType]: P extends ReadonlySignals ? ReadonlySignal<XURLType[P]> : Signal<XURLType[P]>;
+} & {
     state: Signal<"pop" | "push">
 }

@@ -1,7 +1,8 @@
 import { computed, batch, type ReadonlySignal } from "@preact/signals";
 import { resolveUrl } from "@utils";
-import { createURLSignals, setUrl } from "./utils.ts";
-import type { XURLSignals, XURLSubMap, XURLSubFunc, XURLType } from "./types.ts";
+import { createURLSignals, parseLocation, setUrl } from "./utils.ts";
+import type { XURLSignals, XURLSubMap, XURLSubFunc, XURLType, XURLDir, XURLExt } from "./types.ts";
+import config from "@config";
 
 export class XURL {
     static signals = new WeakMap<XURL, XURLSignals>()
@@ -47,16 +48,124 @@ export class XURL {
         addEventListener('popstate', () => setUrl(this, location.href, 'pop'))
     }
 
-    goto(input: string | URL | Location) {
-        setUrl(this, input, 'push')
+    goto(input?: string | URL | Location | null, line?: number | null, column?: number | null): this {
+        batch(() => {
+            if (input)
+                setUrl(this, input, 'push')
+            if (line)
+                this.line = line
+            if (column)
+                this.column = column
+        })
+
+        console.log(`xurl.goto(${[this, line, column].filter(Boolean).join(', ')})`)
+
+        return this
+    }
+
+    location(line?: number | null, column?: number | null): this {
+        batch(() => {
+            if (line)
+                this.line = line
+            if (column)
+                this.column = column
+        })
+
+        return this
+    }
+
+    async open() {
+        const searchParams = new URLSearchParams(this.search)
+        searchParams.set('open', '')
+        const openUrl = this.origin + this.path + '?' + searchParams
+
+        console.log(`xurl.open(${this.origin + this.path + this.search})`)
+
+        const res = await fetch(openUrl, {
+            headers: {
+                'x-dest': 'document'
+            }
+        })
+
+        if (!res.ok) {
+            throw new Error(`Failed to open: ${this} [${res.status}]`)
+        }
+
+        console.log([
+            res.headers.get('x-file-path'),
+            Number(res.headers.get('x-file-line') || 1),
+            Number(res.headers.get('x-file-column') || 1)
+        ])
+
+        return this
+    }
+
+    async import(reload?: boolean) {
+        const searchParams = this.searchParams
+        if (reload) searchParams.set('reload', Date.now().toString())
+        const url = this.origin + this.path + '?' + searchParams
+
+        try {
+            const $mod = url.endsWith('.json')
+                ? await import(/* @vite-ignore */ url, { with: { type: 'json' } })
+                : await import(/* @vite-ignore */ url)
+            // @ts-ignore .
+            globalThis.$mod = $mod
+            console.log(`import(${this}) => $mod`, $mod)
+            return $mod
+
+        } catch (cause: any) {
+            throw new Error(cause.message);
+        }
+    }
+
+    get params(): Record<string, any> {
+        return this.#signals.params.value
+    }
+
+    get dir(): XURLDir {
+        return this.#signals.dir.value
+    }
+
+    set dir(value) {
+        const params = this.searchParams
+        params.delete(this.dir)
+        params.set(value, this.ext)
+
+        this.search = params.toString()
+    }
+
+    get ext(): XURLExt {
+        return this.#signals.ext.value
+    }
+
+    set ext(value) {
+        const params = this.searchParams
+        params.set(this.dir, value)
+
+        this.search = params.toString()
+    }
+
+    file(dir: XURLDir, ext: XURLExt) {
+
+        batch(() => {
+            this.dir = dir
+            this.ext = ext
+        })
+
+        return this
     }
 
     back() {
         globalThis.history.back()
+
+        return this
     }
 
     forward() {
         globalThis.history.forward()
+
+        return this
     }
 
     get #signals() {
@@ -120,8 +229,62 @@ export class XURL {
     }
 
     set pathname(value: string) {
+        this.path = value
+    }
+
+    get path(): string {
+        return this.#signals.path.value
+    }
+
+    set path(value: string) {
         if (typeof value === 'undefined') return
-        this.#signals.pathname.value = value.startsWith('/') ? value : `/${value}`;
+        const path = value.startsWith('/') ? value : `/${value}`;
+        const { url, line, column } = parseLocation(new URL(path, this.origin))
+
+        batch(() => {
+            this.#signals.pathname.value = url.pathname
+
+            this.#signals.path.value = [
+                url.pathname,
+                line || this.#signals.line.value,
+                column || this.#signals.column.value
+            ].filter(Boolean).join(':')
+
+            if (line)
+                this.#signals.line.value = line
+            if (column)
+                this.#signals.column.value = column
+        })
+    }
+
+    get line(): number | undefined {
+        return this.#signals.line.value;
+    }
+
+    set line(value: number | undefined) {
+        batch(() => {
+            this.#signals.line.value = value
+            this.#signals.path.value = [
+                this.pathname,
+                value || (this.column ? 1 : undefined),
+                this.column
+            ].filter(Boolean).join(':')
+        })
+    }
+
+    get column(): number | undefined {
+        return this.#signals.column.value;
+    }
+
+    set column(value: number | undefined) {
+        batch(() => {
+            this.#signals.column.value = value
+            this.#signals.path.value = [
+                this.pathname,
+                this.line,
+                this.column
+            ].filter(Boolean).join(':')
+        })
     }
 
     get hash(): string {
@@ -170,35 +333,19 @@ export class XURL {
     }
 
     toJSON(): XURLType {
-        return {
-            protocol: this.#signals.protocol.peek(),
-            host: this.#signals.host.peek(),
-            hostname: this.#signals.hostname.peek(),
-            port: this.#signals.port.peek(),
-            origin: this.#signals.origin.peek(),
-            pathname: this.#signals.pathname.peek(),
-            search: this.#signals.search.peek(),
-            searchParams: this.#signals.searchParams.peek(),
-            hash: this.#signals.hash.peek(),
-            href: this.#signals.href.peek(),
-            // state: this.#signals.state.peek()
-        }
+        const exclude = ['state', 'searchParams'];
+
+        return Object.keys(this.#signals)
+            .filter(key => !exclude.includes(key))
+            .reduce((acc, key) => {
+                acc[key as any] = this.#signals[key as keyof XURLSignals].peek()
+
+                return acc
+            }, {} as any)
     }
 
-    toSignal(): XURLSignals {
-        return {
-            protocol: this.#signals.protocol,
-            port: this.#signals.port,
-            hostname: this.#signals.hostname,
-            host: this.#signals.host,
-            origin: this.#signals.origin,
-            pathname: this.#signals.pathname,
-            search: this.#signals.search,
-            searchParams: this.#signals.searchParams,
-            hash: this.#signals.hash,
-            href: this.#signals.href,
-            state: this.#signals.state
-        }
+    signals(): XURLSignals {
+        return this.#signals
     }
 
     toURL(): URL {
@@ -225,7 +372,7 @@ export class XURL {
 
         const keys = Object.keys(input) as (keyof I)[];
         const result = {} as Record<keyof I, () => void>
-        const $this = this.toSignal()
+        const $this = this.signals()
 
         return keys.reduce((acc, key) => {
             if (key === 'any') {

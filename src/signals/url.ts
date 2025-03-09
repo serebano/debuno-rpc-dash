@@ -14,13 +14,15 @@ export const xurl = new XURL(location, {
             setCode({ code: `// Index`, error: null })
             return
         }
+
         utils.fetchCode(value)
             .then(setCode)
             .catch(setError)
             .finally(() => console.log(`\n\t\t\ code @ ${value} OK\n\n`))
     },
     origin(value, xurl) {
-        if (xurl.host === "blank" || xurl.host === 'index') return;
+        if (xurl.host === "blank" || xurl.host === 'index')
+            return;
         if (origins.value.length === 0)
             setOrigins([value])
     },

@@ -125,7 +125,7 @@ export function replaceImportAndExportPathsWithLinks(
 export function linkImports(sourceCode: string, loc: RequestLocation, urls: string[]): string {
     // console.log('linkImports/modules', modules)
 
-    const importLink = (specifier: string, url: string) => `&alt;a&asp;class="mod-path&asp;link"&asp;title="Open ${specifier} [Cmd + Click]"&asp;href="${url}"&agt;${specifier}&alt;/a&agt;`
+    const importLink = (specifier: string, url: string) => `&alt;a&asp;class="mod-path&asp;link"&asp;title="Open ${specifier} [Cmd + Click]"&asp;onclick="goto('${url}'); return false;"&agt;${specifier}&alt;/a&agt;`
 
     return replaceImportAndExportPathsWithLinks(sourceCode, (importPath: string) => {
 
