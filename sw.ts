@@ -1,10 +1,11 @@
-const CACHE_NAME = "app-cache-v3";
+const CACHE_NAME = "app-cache-v4";
 const urlsToCache = [
     "/",
     "/index.html",
     "/debuno.svg",
     "/main.js",
     "/main.css",
+    "/manifest.json"
 ];
 
 const sw = (self as unknown as ServiceWorkerGlobalScope)
@@ -36,14 +37,14 @@ sw.addEventListener("fetch", (event: FetchEvent) => {
     console.log(`   (sw:fetch)`, event.request.url)
     event.respondWith(
         caches.match(event.request).then((cachedResponse) => {
-            return cachedResponse || fetch(event.request).catch((e) => {
+            return cachedResponse || fetch(event.request).catch(async (e) => {
                 console.warn(`   (sw:fetch:catch-all)`, event.request.url, e.message)
 
-                return caches.match("/index.html").then(res => {
-                    if (!res)
-                        throw new Error(`/index.html cache miss`)
-                    return res
-                })
+                const res = await caches.match("/index.html");
+                if (!res)
+                    throw new Error(`/index.html cache miss`);
+
+                return res;
             })
 
             // .catch(() => {

@@ -1,5 +1,5 @@
 import type { RequestLocation } from "@utils/RequestLocation.ts";
-import type { XURL } from "@xurl/XURL.ts";
+import type { XURL } from "@xurl";
 
 export function getChanges(oldArray: string[], newArray: string[]): { added: string[]; removed: string[]; } {
     const oldSet = new Set(oldArray);
@@ -80,7 +80,7 @@ export function getSubUrl(url: string | URL | Location): URL {
             return new URL(`${protocol}//error`);
         }
     } else {
-        return new URL(`${protocol}//index`);
+        return new URL(`${protocol}//index` + url.search + url.hash);
     }
 }
 

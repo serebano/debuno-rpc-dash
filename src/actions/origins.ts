@@ -1,7 +1,6 @@
-import origins, { type Origins } from "@signals/origins.ts";
 import { getChanges } from "@utils";
 import { removeOriginFiles } from "@actions";
-import { xurl } from "@signals";
+import { xurl, origins, type Origins } from "@signals";
 
 export function getOrigins() {
     return origins.value

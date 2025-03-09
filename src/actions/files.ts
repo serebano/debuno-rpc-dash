@@ -1,4 +1,4 @@
-import files, { type Files } from "@signals/files.ts";
+import { files, type Files } from "@signals";
 
 export function getFiles(): Files {
     return files.value

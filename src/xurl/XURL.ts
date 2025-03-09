@@ -1,8 +1,7 @@
 import { computed, batch, type ReadonlySignal } from "@preact/signals";
 import { resolveUrl } from "@utils";
-import { createURLSignals, parseLocation, setUrl } from "./utils.ts";
-import type { XURLSignals, XURLSubMap, XURLSubFunc, XURLType, XURLDir, XURLExt } from "./types.ts";
-import config from "@config";
+import { createURLSignals, parseLocation, setUrl } from "@xurl/utils.ts";
+import type { XURLSignals, XURLSubMap, XURLSubFunc, XURLType, XURLDir, XURLExt } from "@xurl/types.ts";
 
 export class XURL {
     static signals = new WeakMap<XURL, XURLSignals>()

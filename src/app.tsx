@@ -1,11 +1,11 @@
 import "./app.css";
-import SideNav from "./nav/SideNav.tsx";
+import Nav from "./nav/Nav.tsx";
 import Body from "./body/body.tsx";
 
 export function App() {
   return (
     <div id="app">
-      <SideNav />
+      <Nav />
       <Body />
     </div>
   );

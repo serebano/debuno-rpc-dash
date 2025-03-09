@@ -69,7 +69,7 @@ export function markup(reqLoc: RequestLocation, sourceCode: string, urls: string
     const typeVal = reqLoc.typeVal
 
     const srcKeyLink = reqLoc.origin + reqLoc.pathname + '?' + config.srcKey + "=" + typeVal
-    const outKeyLink = reqLoc.origin + reqLoc.pathname + '?' + config.outKey + "=" + typeVal
+    const outKeyLink = reqLoc.origin + reqLoc.pathname + '?' + config.genKey + "=" + typeVal
 
     const tsValLink = reqLoc.origin + reqLoc.pathname + '?' + typeKey + "=ts"
     const jsValLink = reqLoc.origin + reqLoc.pathname + '?' + typeKey + "=js"
@@ -82,7 +82,7 @@ export function markup(reqLoc: RequestLocation, sourceCode: string, urls: string
             <div style="display:flex;gap:10px;">
                 <div class="type-switch">
                     <a class="link ${typeKey === config.srcKey ? "type-selected" : ""}" href="${srcKeyLink}">${config.srcKey}</a>
-                    <a class="link ${typeKey === config.outKey ? "type-selected" : ""}" href="${outKeyLink}">${config.outKey}</a>
+                    <a class="link ${typeKey === config.genKey ? "type-selected" : ""}" href="${outKeyLink}">${config.genKey}</a>
                 </div>
                 <div class="type-switch">
                     <a class="link ${typeVal === 'ts' ? "type-selected" : ""}" href="${tsValLink}">ts</a>
@@ -105,8 +105,8 @@ export function markup(reqLoc: RequestLocation, sourceCode: string, urls: string
             <span style="flex:1"></span>
 
             <div>
-                <a title="Import" onclick="importFile('${reqLoc.url}')">import()</a>
-                <a title="ReImport" onclick="importFile('${reqLoc.url}', true)">import(r)</a>
+                <a title="Import" onclick="xurl.import()">import()</a>
+                <a title="ReImport" onclick="xurl.import(true)">import(r)</a>
             </div>
 
         </div>

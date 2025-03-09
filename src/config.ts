@@ -1,7 +1,5 @@
 export default {
     srcKey: 'src' as const,
-    outKey: 'out' as const,
-    get protocol() {
-        return `web+rpc`
-    },
+    genKey: 'gen' as const,
+    protocol: 'web+rpc'
 }

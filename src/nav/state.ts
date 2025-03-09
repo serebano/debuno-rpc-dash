@@ -1,15 +1,13 @@
 import { computed } from "@preact/signals";
-import * as $ from "@signals";
+import signals from "@signals";
 import type { NavigationState } from "./types.ts";
 
 export default computed<NavigationState>(() => {
-    // const loc = $.loc.value
-    const urls = $.files.value
-    const origin = $.xurl.origin
-    const pathname = $.xurl.pathname
+    const urls = signals.files.value
+    const origin = signals.xurl.origin
+    const pathname = signals.xurl.pathname
 
-    const typeParam = $.xurl.search + $.xurl.hash
-    //  loc.typeKey === config.srcKey && loc.typeVal === "ts" ? ""  : `?${loc.typeKey}=${loc.typeVal}`
+    const typeParam = signals.xurl.search + signals.xurl.hash
     const currentUrl = origin + pathname + typeParam
 
     const mapping = urls

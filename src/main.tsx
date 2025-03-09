@@ -1,13 +1,13 @@
 import { render } from "preact";
 import { App } from "./app.tsx";
-import signals from "@signals";
+import * as signals from "@signals";
 import * as actions from "@actions";
-import utils from "@utils";
+import * as utils from "@utils";
 
 Object.assign(globalThis, { utils, signals, actions });
 
 if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("/sw.js", { scope: "/" }).then(
+  navigator.serviceWorker.register("/sw.js").then(
     (registration) => {
       console.log("Service Worker registered:", registration.scope);
     },

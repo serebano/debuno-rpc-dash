@@ -10,7 +10,7 @@ export interface RequestLocation {
     host: string;
     path: string;
     protocol: string;
-    typeKey: typeof config.srcKey | typeof config.outKey;
+    typeKey: typeof config.srcKey | typeof config.genKey;
     typeVal: 'ts' | 'js';
     route: RPCRoute;
     namespace: string;
@@ -38,7 +38,7 @@ export function getLocation(input: Request, base?: string | RPCRoute): RequestLo
 
     const pathParts = url.pathname.split('/').filter(Boolean)
 
-    const typeKey = url.searchParams.has(config.srcKey) ? config.srcKey : url.searchParams.has(config.outKey) ? config.outKey : config.srcKey
+    const typeKey = url.searchParams.has(config.srcKey) ? config.srcKey : url.searchParams.has(config.genKey) ? config.genKey : config.srcKey
     const typeVal = (url.searchParams.get(typeKey) || "ts") as 'ts' | 'js'
 
     const lastPart = pathParts.pop()

@@ -1,4 +1,3 @@
-export * from "./utils/mod.ts"
-import * as utils from "./utils/mod.ts"
+export * as default from "@utils/mod.ts"
+export * from "@utils/mod.ts"
 
-export default utils

@@ -1,8 +1,9 @@
 import type { Signal, ReadonlySignal } from "@preact/signals";
-import type { XURL } from "./XURL.ts";
+import type { XURL } from "@xurl/XURL.ts";
 import type config from "@config";
 
-export type XURLDir = typeof config.srcKey | typeof config.outKey
+export type { XURL }
+export type XURLDir = typeof config.srcKey | typeof config.genKey
 export type XURLExt = 'ts' | 'js'
 
 export interface XURLType {

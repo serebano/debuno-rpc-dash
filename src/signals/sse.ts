@@ -1,14 +1,9 @@
 import { computed, signal, type Signal } from "@preact/signals";
-import origins, { type Origin } from "./origins.ts";
+import { xurl, origins, type FileEvent } from "@signals";
+import { addFile, removeFile, setFiles, setError, setCode, removeOrigin, setOrigins } from "@actions";
 import { fetchCode } from "@utils";
-import { setError } from "@signals/error.ts";
-import { xurl } from "@signals";
-import { setCode } from "@signals/code.ts";
-import { removeOrigin, setOrigins } from "../actions/origins.ts";
-import { addFile, removeFile, setFiles } from "../actions/files.ts";
-import type { FileEvent } from "@signals/files.ts";
 
-export const events = new Map<string, EventSource>()
+// export const events = new Map<string, EventSource>()
 
 export const eventSourcesMap = new Map<string, EventSource>()
 export const eventSourcesStateMap = new WeakMap<EventSource, Signal<0 | 1 | 2>>()
@@ -41,9 +36,9 @@ eventSourcesState.subscribe(val => {
     console.log('eventSourcesState', val)
 })
 
-export const oindex = signal(origins.value.length - 1)
-export const origin = computed(() => origins.value.at(oindex.value))
-export const oevent = computed(() => origin.value ? events.get(origin.value) : undefined)
+// export const oindex = signal(origins.value.length - 1)
+// export const origin = computed(() => origins.value.at(oindex.value))
+// export const oevent = computed(() => origin.value ? events.get(origin.value) : undefined)
 
 // export function changeOrigin() {
 //     const originsSize = origins.value.length
@@ -60,7 +55,7 @@ export const oevent = computed(() => origin.value ? events.get(origin.value) : u
 //     }
 // }
 
-let prevOrigin = origin.value
+// let prevOrigin = origin.value
 
 // origins.subscribe(o => {
 //     console.log(` *  on$origins:`, o)
@@ -92,7 +87,7 @@ let prevOrigin = origin.value
 // })
 
 
-function getState(readyState: 0 | 1 | 2): { readonly state: "OPEN" | "CLOSED" | "CONNECTING", readonly readyState: number; readonly 1: "OPEN"; readonly 2: "CLOSED"; readonly 0: "CONNECTING"; readonly OPEN: boolean; readonly CLOSED: boolean; readonly CONNECTING: boolean; } {
+export function getState(readyState: 0 | 1 | 2): { readonly state: "OPEN" | "CLOSED" | "CONNECTING", readonly readyState: number; readonly 1: "OPEN"; readonly 2: "CLOSED"; readonly 0: "CONNECTING"; readonly OPEN: boolean; readonly CLOSED: boolean; readonly CONNECTING: boolean; } {
     const { CLOSED, CONNECTING, OPEN } = EventSource
     const obj = {
         readyState,
@@ -113,10 +108,10 @@ function getState(readyState: 0 | 1 | 2): { readonly state: "OPEN" | "CLOSED" | 
 }
 
 
-export const readyState = signal<0 | 1 | 2>(0)
-export const readyStateMap = computed(() => getState(readyState.value))
-export const readyStateKey = computed(() => readyStateMap.value.state)
-export const host = computed(() => origin.value ? new URL(origin.value).host : null)
+// export const readyState = signal<0 | 1 | 2>(0)
+// export const readyStateMap = computed(() => getState(readyState.value))
+// export const readyStateKey = computed(() => readyStateMap.value.state)
+// export const host = computed(() => origin.value ? new URL(origin.value).host : null)
 
 
 export function createEventSource(origin: string | URL): EventSource {

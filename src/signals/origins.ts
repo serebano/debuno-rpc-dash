@@ -1,6 +1,4 @@
 import { signal } from "@preact/signals";
-
-export type Origin = string
-export type Origins = Origin[]
+import type { Origins } from "@signals";
 
 export default signal<Origins>([]);

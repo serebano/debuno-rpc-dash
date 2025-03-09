@@ -1,7 +1,6 @@
 import { computed, signal, batch } from "@preact/signals";
-import { getSubUrl, resolveUrl } from "../utils/mod.ts";
-import type { XURL } from "./XURL.ts";
-import type { XURLDir, XURLExt, XURLSignals } from "./types.ts";
+import { getSubUrl, resolveUrl } from "@utils";
+import type { XURL, XURLExt, XURLSignals } from "@xurl/types.ts";
 import config from "@config";
 
 
@@ -69,7 +68,7 @@ export function createURLSignals(init: string | URL | Location): XURLSignals {
         dir: computed(() => {
             const params = signals.searchParams.value
             const srcKey = config.srcKey
-            const outKey = config.outKey
+            const outKey = config.genKey
             const defKey = config.srcKey
 
             return params.has(srcKey) ? srcKey : params.has(outKey) ? outKey : defKey

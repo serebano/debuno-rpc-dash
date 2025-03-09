@@ -1,2 +1,3 @@
-export * from './actions/origins.ts'
-export * from './actions/files.ts'
+export * from "@actions/mod.ts"
+export * as default from "@actions/mod.ts"
+

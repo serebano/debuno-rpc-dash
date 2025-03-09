@@ -33,9 +33,9 @@
     "@actions/": "./src/actions/",
     "@utils": "./src/utils.ts",
     "@utils/": "./src/utils/",
+    "@xurl": "./src/xurl.ts",
     "@xurl/": "./src/xurl/",
-    "@config": "./src/config.ts",
-    "@xurl": "./src/xurl/mod.ts"
+    "@config": "./src/config.ts"
   },
   "lint": {
     "rules": {
