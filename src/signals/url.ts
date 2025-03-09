@@ -11,7 +11,7 @@ export const xurl = new XURL(location, {
     href(value, xurl) {
         if (xurl.host === "blank") return;
         if (xurl.host === 'index') {
-            setCode({ code: `// Index`, error: null })
+            setCode({ code: `// Indexxx`, error: null })
             return
         }
 
