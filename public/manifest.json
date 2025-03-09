@@ -1,0 +1,23 @@
+{
+    "name": "RPC Explorer",
+    "short_name": "RPC",
+    "description": "Debuno RPC Explorer",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#21252b",
+    "theme_color": "#21252b",
+    "icons": [
+        {
+            "src": "/debuno.svg",
+            "sizes": "any",
+            "type": "image/svg+xml",
+            "purpose": "any"
+        }
+    ],
+    "protocol_handlers": [
+        {
+            "protocol": "web+rpc",
+            "url": "/?data=%s"
+        }
+    ]
+}
