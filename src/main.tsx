@@ -1,5 +1,6 @@
 import { render } from "preact";
 import { App } from "./app.tsx";
+import { Welcome } from "./welcome.tsx";
 import * as signals from "@signals";
 import * as actions from "@actions";
 import * as utils from "@utils";
@@ -17,9 +18,7 @@ if ("serviceWorker" in navigator) {
 }
 
 function Main() {
-  return signals.xurl.host === "blank"
-    ? <div>Invalid URL: {location.href}</div>
-    : <App />;
+  return signals.xurl.host === "index" ? <Welcome /> : <App />;
 }
 
 render(<Main />, document.body);

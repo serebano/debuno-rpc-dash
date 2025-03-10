@@ -2,6 +2,7 @@ import { computed, batch, type ReadonlySignal } from "@preact/signals";
 import { resolveUrl } from "@utils";
 import { createURLSignals, parseLocation, setUrl } from "@xurl/utils.ts";
 import type { XURLSignals, XURLSubMap, XURLSubFunc, XURLType, XURLDir, XURLExt } from "@xurl/types.ts";
+import type { JSX } from "preact/jsx-runtime";
 
 export class XURL {
     static signals = new WeakMap<XURL, XURLSignals>()
@@ -22,6 +23,7 @@ export class XURL {
         XURL.createSignals(this, init)
 
         this.goto = this.goto.bind(this)
+        this.onclick = this.onclick.bind(this)
 
         switch (typeof subInit) {
             case "function":
@@ -60,6 +62,11 @@ export class XURL {
         console.log(`xurl.goto(${[this, line, column].filter(Boolean).join(', ')})`)
 
         return this
+    }
+
+    onclick(e: JSX.TargetedMouseEvent<HTMLAnchorElement>) {
+        e.preventDefault()
+        this.goto(e.currentTarget.href)
     }
 
     location(line?: number | null, column?: number | null): this {

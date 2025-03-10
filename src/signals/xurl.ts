@@ -3,25 +3,28 @@ import * as utils from "@utils"
 import * as sse from "@signals/sse.ts"
 import origins from "@signals/origins.ts";
 import { setOrigins, setError, setCode } from "@actions";
+import config from "@config";
 
 export const xurl = new XURL(location, {
-    href(value, xurl) {
-        if (xurl.host === "blank") return;
-        if (xurl.host === 'index') {
-            if (xurl.params.handle) {
-                try {
-                    const url = new URL(xurl.params.handle)
-                    xurl.goto('http://' + url.host + url.pathname + url.search + url.hash)
-                    return
-                } catch (e: any) {
-                    setCode({ code: '/**\n' + e.stack + '\n*/' })
-                    return
-                }
+    params(value) {
+        if (value.handle) {
+            try {
+                const url = new URL(xurl.params.handle)
+                xurl.goto('http://' + url.host + url.pathname + url.search + url.hash)
+                return
+            } catch (e: any) {
+                setCode({ code: '/**\n' + e.stack + '\n*/' })
+                return
             }
-
-            setCode({ code: `// Indexxx`, error: null })
-            return
         }
+    },
+    href(value, xurl) {
+        if (xurl.host === "blank" || xurl.host === 'index') {
+            document.title = config.name
+            return;
+        }
+
+        document.title = xurl.host + xurl.pathname + xurl.search
 
         utils.fetchCode(value)
             .then(setCode)
@@ -31,8 +34,10 @@ export const xurl = new XURL(location, {
     origin(value, xurl) {
         if (xurl.host === "blank" || xurl.host === 'index')
             return;
-        if (origins.value.length === 0)
+        if (origins.value.length === 0) {
+            localStorage.setItem('origin', value)
             setOrigins([value])
+        }
     },
     any(prop, value, ctx) {
         // @ts-ignore .
@@ -67,10 +72,5 @@ export default xurl
 
 //     }
 // })
-
-xurl.compute(x => x.host + x.pathname + x.search)
-    .subscribe(title => {
-        document.title = title
-    })
 
 Object.assign(globalThis, { utils, goto: xurl.goto, xurl, XURL, sse })

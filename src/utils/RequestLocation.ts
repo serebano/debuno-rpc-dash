@@ -30,10 +30,10 @@ export interface RequestLocation {
 
 export function getLocation(input: Request, base?: string | RPCRoute): RequestLocation {
     const inputUrl = decodeURIComponent(input.url)
-    const isProtocolHandle = inputUrl.includes(config.protocol + ':///')
+    const isProtocolHandle = inputUrl.includes(config.protocolHandler + ':///')
 
     const url = isProtocolHandle
-        ? new URL(inputUrl.replace(config.protocol + ':///', ''))
+        ? new URL(inputUrl.replace(config.protocolHandler + ':///', ''))
         : new URL(inputUrl);
 
     const pathParts = url.pathname.split('/').filter(Boolean)

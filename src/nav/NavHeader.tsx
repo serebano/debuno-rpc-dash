@@ -1,4 +1,6 @@
 import Icon from "../icons/icon.tsx";
+import { xurl } from "@signals";
+import state from "./state.ts";
 
 const iconProps = {
   size: 22,
@@ -13,8 +15,15 @@ const iconProps = {
 export default function NavHeader() {
   return (
     <div class="nav-header">
-      <Icon {...iconProps} />
-      <div style={{ flex: "auto" }}></div>
+      <a
+        onClick={(e) => {
+          e.preventDefault();
+          xurl.goto("/");
+        }}
+      >
+        <Icon {...iconProps} />
+      </a>
+      <div style={{ flex: "auto" }}>{xurl.host}</div>
     </div>
   );
 }

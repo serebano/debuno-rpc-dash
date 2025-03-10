@@ -1,5 +1,10 @@
 export default {
-    srcKey: 'src' as const,
-    genKey: 'gen' as const,
-    protocol: 'web+rpc'
-}
+    name: 'RPC Dash',
+    description: 'Debuno RPC Dashboard',
+    srcKey: 'src',
+    genKey: 'gen',
+    protocolHandler: {
+        protocol: 'web+rpc',
+        url: '/?handle=%s'
+    }
+} as const

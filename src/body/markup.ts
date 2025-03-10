@@ -12,6 +12,7 @@ import type { RequestLocation } from "@utils/RequestLocation.ts";
 import { linkImports } from "@utils";
 import config from "@config";
 import { xurl } from "@signals";
+import loc from "@signals/loc.ts";
 
 // Then register the languages you need
 hljs.registerLanguage('ts', typescript);
@@ -68,27 +69,33 @@ export function markup(reqLoc: RequestLocation, sourceCode: string, urls: string
     const typeKey = reqLoc.typeKey
     const typeVal = reqLoc.typeVal
 
-    const srcKeyLink = reqLoc.origin + reqLoc.pathname + '?' + config.srcKey + "=" + typeVal
-    const outKeyLink = reqLoc.origin + reqLoc.pathname + '?' + config.genKey + "=" + typeVal
+    const srcKeyLink = reqLoc.origin + reqLoc.pathname + '?' + config.srcKey + "=" + (reqLoc.extension === 'js' ? 'js' : typeVal)
+    const outKeyLink = reqLoc.origin + reqLoc.pathname + '?' + config.genKey + "=" + (reqLoc.extension === 'js' ? 'js' : typeVal)
 
     const tsValLink = reqLoc.origin + reqLoc.pathname + '?' + typeKey + "=ts"
     const jsValLink = reqLoc.origin + reqLoc.pathname + '?' + typeKey + "=js"
 
     const typeSearchParam = `?${typeKey}=${typeVal}`
 
+    const Dir = `<div class="type-switch">
+                    <a class="link ${typeKey === config.srcKey ? "type-selected" : ""}" href="${srcKeyLink}" onclick="xurl.onclick(event)">${config.srcKey}</a>
+                    <a class="link ${typeKey === config.genKey ? "type-selected" : ""}" href="${outKeyLink}" onclick="xurl.onclick(event)">${config.genKey}</a>
+                </div>`
+
+    const Ext = `<div class="type-switch">
+                    <a class="link ${typeVal === 'ts' ? "type-selected" : ""}" href="${tsValLink}" onclick="xurl.onclick(event)">ts</a>
+                    <a class="link ${typeVal === 'js' ? "type-selected" : ""}" href="${jsValLink}" onclick="xurl.onclick(event)">js</a>
+                </div>`
+
+    const FileSwitch = `<div style="display:flex;gap:10px;">
+                ${reqLoc.extension === 'ts' || reqLoc.extension === 'js' ? Dir : ''}
+                ${reqLoc.extension === 'ts' ? Ext : ''}
+            </div>`
+
     return `
     <div id="preview" class="main">
         <div class="header">
-            <div style="display:flex;gap:10px;">
-                <div class="type-switch">
-                    <a class="link ${typeKey === config.srcKey ? "type-selected" : ""}" href="${srcKeyLink}">${config.srcKey}</a>
-                    <a class="link ${typeKey === config.genKey ? "type-selected" : ""}" href="${outKeyLink}">${config.genKey}</a>
-                </div>
-                <div class="type-switch">
-                    <a class="link ${typeVal === 'ts' ? "type-selected" : ""}" href="${tsValLink}">ts</a>
-                    <a class="link ${typeVal === 'js' ? "type-selected" : ""}" href="${jsValLink}">js</a>
-                </div>
-            </div>
+            ${reqLoc.extension === 'ts' || reqLoc.extension === 'js' ? FileSwitch : ''}
 
             <span id="fileName">
                 <a class="link" id="current-file" href="${new URL('./' + reqLoc.fileName, reqLoc.url) + typeSearchParam}" style="display:flex;align-items:center;justify-content:center;">

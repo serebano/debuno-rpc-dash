@@ -7,12 +7,12 @@ import DotIcon from "../../icons/DotIcon.tsx";
 export function Folder(
   { name, node, currentUrl, depth = 0 }: FolderProps,
 ) {
-  const isOpen = hasSelectedItem(node, currentUrl);
+  const isOpen = hasSelectedItem(node, currentUrl, depth);
 
   if (shouldCombinePath(node)) {
     const [displayPath, finalNode, fullPath] = getNestedPath(node, name);
     return (
-      <li class="folder">
+      <li data-depth={depth} class="folder">
         <details open={isOpen}>
           <summary>
             <div class="label-container">
@@ -48,7 +48,7 @@ export function Folder(
     : "";
 
   return (
-    <li class="folder">
+    <li data-depth={depth} class={depth > 0 ? "folder" : "folder_public"}>
       <details open={isOpen}>
         <summary>
           <div class="label-container">

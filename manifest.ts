@@ -1,7 +1,10 @@
-{
-    "name": "RPC Dash",
-    "short_name": "RPC Dash",
-    "description": "Debuno RPC Dashboard",
+import config from "@config";
+import { writeFile } from "node:fs/promises";
+
+const manifest = {
+    "name": config.name,
+    "short_name": config.name,
+    "description": config.description,
     "start_url": "/",
     "display": "standalone",
     "background_color": "#21252b",
@@ -16,11 +19,13 @@
     ],
     "protocol_handlers": [
         {
-            "protocol": "web+rpc",
-            "url": "/?handle=%s"
+            "protocol": config.protocolHandler.protocol,
+            "url": config.protocolHandler.url
         }
     ],
     "launch_handler": {
         "client_mode": "navigate-existing"
     }
 }
+
+await writeFile('./public/manifest.json', JSON.stringify(manifest, null, 4))

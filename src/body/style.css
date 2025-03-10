@@ -1,23 +1,27 @@
 .type-switch {
 	display: flex;
-	background: rgba(73, 81, 98, 0.5);
+	background: rgba(73, 81, 98, 0);
 	border: 0.5px solid rgba(73, 81, 98, 0.5);
+	padding: 1px;
 	line-height: 20px;
+	border-radius: 6px;
+	overflow: hidden;
 }
 .type-switch span {
 }
 .type-switch a {
-	padding: 0 7px;
+	padding: 0 10px;
 	color: rgba(255, 255, 255, 0.5);
 	transition: all 0.5s easy;
 }
 .type-switch a:hover {
-	background: rgba(0, 0, 0, 0.2);
+	color: rgba(255, 255, 255, 0.8);
 }
 .type-switch a.type-selected {
 	background: #21252b;
 	color: rgba(255, 255, 255, 0.9);
 	padding: 0 10px;
+	border-radius: 5px;
 }
 
 pre,
@@ -47,16 +51,18 @@ code,
 }
 .header {
 	position: sticky;
-	top: 0;
-	background: inherit;
+	top: 0px;
+	background: #282c34;
+	/* border-radius: 7px; */
 	color: inherit;
 	z-index: 10;
-	height: 42px;
+	height: 48px;
+	/* margin: 10px; */
 	display: flex;
 	align-items: center;
-	padding: 0 20px;
+	padding: 0 12px;
 	font-size: 12px;
-	gap: 20px;
+	gap: 12px;
 }
 
 .code-mask {
