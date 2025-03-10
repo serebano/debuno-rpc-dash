@@ -132,6 +132,7 @@ export function createEventSource(origin: string | URL): EventSource {
         const state = getState(rs).state
 
         console.log(`!!readyState:`, origin, state)
+
         if (state === 'CLOSED') {
             removeOrigin(origin)
             eventSourcesMap.delete(origin)
@@ -140,39 +141,32 @@ export function createEventSource(origin: string | URL): EventSource {
     })
 
 
-    es.addEventListener('open', (e: any) => {
+    es.addEventListener('open', () => {
         readyState.value = es.readyState as any
-        console.log(`   /sse on:open`, origin)
     })
 
-    es.addEventListener('error', (e: any) => {
+    es.addEventListener('error', () => {
         readyState.value = es.readyState as any
-        console.log(`   /sse on:error`, origin)
+        // console.log(`   /sse on:error`, origin)
         // removeOrigin(origin)
     })
 
     es.addEventListener('origins', e => {
         const data = JSON.parse(e.data) as ({ file: string, http: string }[])
-        const value = data.map(v => v.http)
-        console.log(` /sse on:origins`, value)
-        setOrigins(value)
+        setOrigins(data.map(v => v.http))
     })
 
     es.addEventListener('files', (e) => {
         const data = JSON.parse(e.data) as ({ path: string, file: string, http: string }[] | { error: any })
-
         if ('error' in data) {
-            console.log(` /sse on:meta:error`, data)
+            console.log(` /sse on:files:error`, data)
             setError(data)
         } else {
-            console.log(` /sse on:files`)
-            const value = data.map(v => v.http)
-            setFiles(value)
+            setFiles(data.map(v => v.http))
         }
 
     })
 
-    let lastRemovedFile: string | undefined
     es.addEventListener('file', (e) => {
         // const id = e.lastEventId
         const data = JSON.parse(e.data) as (FileEvent | { error: any })
@@ -181,31 +175,25 @@ export function createEventSource(origin: string | URL): EventSource {
             console.log(` /sse on:file:error`, data)
             setError(data)
         } else {
-            console.log(` /sse on:file`, data)
-            switch (data.kind) {
-                case 'modify': {
+            switch (data.type) {
+                case 'changed': {
                     if (xurl.origin + xurl.pathname === data.http) {
-                        fetchCode(data.http)
+                        fetchCode(xurl.href)
                             .then(setCode)
                     }
                     break
                 }
-                case 'remove': {
-                    lastRemovedFile = data.http
+                case 'removed': {
                     removeFile(data.http)
                     break
                 }
-                case 'create':
-                case 'rename': {
+                case 'added': {
                     addFile(data.http)
-                    if (data.kind === 'rename' && lastRemovedFile === xurl.href) {
-                        xurl.goto(data.http)
-                        lastRemovedFile = undefined
-                    }
+                    xurl.goto(data.http)
                     break
                 }
                 default: {
-                    console.log(`onFile kind`, data.kind, data.path)
+                    console.log(`onFile unknown typeevent`, data.type, data.path)
                 }
             }
         }

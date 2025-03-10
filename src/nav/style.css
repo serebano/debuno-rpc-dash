@@ -9,7 +9,6 @@ a:hover {
 	position: sticky;
 	top: 0;
 	left: 0;
-	background: inherit;
 	z-index: 10;
 	height: 42px;
 	display: flex;
@@ -17,7 +16,7 @@ a:hover {
 	padding: 0 10px;
 	gap: 10px;
 	color: rgba(255, 255, 255, 0.9);
-	background: rgba(0, 0, 0, 0.1);
+	background: rgba(0, 0, 0, 0);
 }
 .nav-header a {
 	display: flex;

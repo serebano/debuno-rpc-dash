@@ -2,7 +2,7 @@ export type FileEvent = {
     path: string
     file: string
     http: string
-    kind: "any" | "access" | "create" | "modify" | "rename" | "remove" | "other"
+    type: "added" | "changed" | "removed"
 }
 
 export type Files = string[]
