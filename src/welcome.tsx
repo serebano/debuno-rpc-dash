@@ -3,6 +3,17 @@ import "./welcome.css";
 import config from "@config";
 import type { JSX } from "preact";
 import { useState } from "preact/hooks";
+import Icon from "./icons/icon.tsx";
+
+const iconProps = {
+  size: 256,
+  padding: 0,
+  strokeWidth: 30,
+  stroke: "#21252b",
+  bgPadding: 0,
+  bgColor: "rgba(0,0,0,0)",
+  fill: "rgb(255 255 255 / 10%)",
+};
 
 export function Welcome() {
   const [origin, setOrigin] = useState(
@@ -16,48 +27,67 @@ export function Welcome() {
 
   return (
     <div id="welcome">
-      <h1>Get started</h1>
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          xurl.host = origin;
-        }}
-      >
-        <input
-          type="text"
-          value={origin}
-          onInput={(e) => setOrigin(e.currentTarget.value)}
-        />
-      </form>
-      <ul>
-        <li>
-          <p>
-            Using <b>{config.protocolHandler.protocol}</b> protocol
-          </p>
-          <a
-            href={`${new URL(
-              config.protocolHandler.url.replace(
-                "%s",
-                encodeURIComponent(
-                  config.protocolHandler.protocol + "://" + origin,
-                ),
-              ),
-              location.origin,
-            )}`}
-            onClick={goto}
+      <div style={{ padding: "20px", marginBottom: "-50px" }}>
+        <Icon {...iconProps} />
+      </div>
+      <div>
+        <div
+          style={{
+            display: "flex",
+            gap: "12px",
+            flexDirection: "column",
+            alignItems: "start",
+            justifyContent: "center",
+          }}
+        >
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              xurl.host = origin;
+            }}
           >
-            {config.protocolHandler.protocol}://{origin}
-          </a>
-        </li>
-        <li>
-          <p>
-            Using <b>{location.origin}</b> origin
-          </p>
-          <a href={`${location.origin}/${origin}`} onClick={goto}>
-            {location.origin}/{origin}
-          </a>
-        </li>
-      </ul>
+            <input
+              style={{
+                borderRadius: "50px",
+                padding: "10px 20px",
+                marginBottom: "10px",
+              }}
+              type="text"
+              value={origin}
+              onInput={(e) => setOrigin(e.currentTarget.value)}
+            />
+          </form>
+        </div>
+        <ul>
+          <li>
+            <p>
+              Using <b>{config.protocolHandler.protocol}</b> protocol
+            </p>
+            <a
+              href={`${new URL(
+                config.protocolHandler.url.replace(
+                  "%s",
+                  encodeURIComponent(
+                    config.protocolHandler.protocol + "://" + origin,
+                  ),
+                ),
+                location.origin,
+              )}`}
+              onClick={goto}
+            >
+              {config.protocolHandler.protocol}://{origin}
+            </a>
+          </li>
+          <li>
+            <p>
+              Using <b>{location.origin}</b> origin
+            </p>
+            <a href={`${location.origin}/${origin}`} onClick={goto}>
+              {location.origin}/{origin}
+            </a>
+          </li>
+        </ul>
+      </div>
     </div>
   );
 }

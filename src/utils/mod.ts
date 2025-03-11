@@ -107,6 +107,21 @@ export async function fetchCode(url: string | URL): Promise<{ error: string | nu
     }
 }
 
+export function replaceImportAndExportPaths(
+    sourceCode: string,
+    linkMapper: (importPath: string) => string
+): string {
+    // Regex to match:
+    // - Static import/export paths: `import ... from '...'` or `export ... from '...'`
+    // - Dynamic import paths: `import('...')`
+    const importExportDynamicRegex = /((?:import|export)\s+[^'"]*['"]|import\s*\(['"])([^'"]+)(['"]\s*\)?)/g;
+
+    return sourceCode.replace(importExportDynamicRegex, (_match, before, importPath, after) => {
+        const link = linkMapper(importPath);
+        return `${before}${link}${after}`;
+    });
+}
+
 export function replaceImportAndExportPathsWithLinks(
     sourceCode: string,
     linkMapper: (importPath: string) => string

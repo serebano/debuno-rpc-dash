@@ -13,11 +13,29 @@ a:hover {
 	height: 48px;
 	display: flex;
 	align-items: center;
-	padding: 0 12px;
-	gap: 12px;
-	color: rgba(255, 255, 255, 0.2);
-	background: rgba(0, 0, 0, 0);
+	padding: 0 8px 0 0;
+	gap: 5px;
+	color: rgba(255, 255, 255, 0.4);
+	background: rgb(33 37 43);
+	font-size: 14px;
+	font-family: -apple-system, BlinkMacSystemFont, sans-serif;
 }
+
+.goback {
+	font-size: 18px;
+	height: 42px;
+	width: 42px;
+	/* background: black; */
+	display: flex;
+	align-content: center;
+	justify-content: center;
+	align-items: center;
+	flex-wrap: wrap;
+}
+.goback:hover {
+	color: white;
+}
+
 .nav-header a {
 	display: flex;
 }

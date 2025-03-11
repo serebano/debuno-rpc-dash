@@ -12,7 +12,6 @@ import type { RequestLocation } from "@utils/RequestLocation.ts";
 import { linkImports } from "@utils";
 import config from "@config";
 import { xurl } from "@signals";
-import loc from "@signals/loc.ts";
 
 // Then register the languages you need
 hljs.registerLanguage('ts', typescript);
@@ -95,6 +94,7 @@ export function markup(reqLoc: RequestLocation, sourceCode: string, urls: string
     return `
     <div id="preview" class="main">
         <div class="header">
+
             ${reqLoc.extension === 'ts' || reqLoc.extension === 'js' ? FileSwitch : ''}
 
             <span id="fileName">
