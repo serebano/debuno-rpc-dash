@@ -49,6 +49,16 @@ export function createURLSignals(init: string | URL | Location): XURLSignals {
     init = getSubUrl(resolveUrl(init))
     const loc = parseLocation(init)
     // init = new URL(loc.url)
+    const handle = init.searchParams.get('handle')
+
+    if (handle) {
+        try {
+            const url = new URL(handle)
+            return createURLSignals('http://' + url.host + url.pathname + url.search + url.hash)
+        } catch (e: any) {
+            throw e
+        }
+    }
 
     const signals: XURLSignals = {
         protocol: signal<string>(init.protocol),

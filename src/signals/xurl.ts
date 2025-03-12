@@ -2,22 +2,10 @@ import { XURL, type XURLType } from "../xurl.ts";
 import * as utils from "@utils"
 import * as sse from "@signals/sse.ts"
 import origins from "@signals/origins.ts";
-import { setOrigins, setError, setCode } from "@actions";
+import { setOrigins, setError, setCode, getOrigins } from "@actions";
 import config from "@config";
 
 export const xurl = new XURL(location, {
-    params(value) {
-        if (value.handle) {
-            try {
-                const url = new URL(xurl.params.handle)
-                xurl.goto('http://' + url.host + url.pathname + url.search + url.hash)
-                return
-            } catch (e: any) {
-                setCode({ code: '/**\n' + e.stack + '\n*/' })
-                return
-            }
-        }
-    },
     href(value, xurl) {
         if (xurl.host === "blank" || xurl.host === 'index') {
             document.title = config.name
@@ -34,9 +22,14 @@ export const xurl = new XURL(location, {
     origin(value, xurl) {
         if (xurl.host === "blank" || xurl.host === 'index')
             return;
+
         if (origins.value.length === 0) {
             localStorage.setItem('origin', value)
-            setOrigins([value])
+            const origins = getOrigins()
+            const exists = !!origins.find(o => o === value)
+            if (!exists) {
+                setOrigins([...origins, value])
+            }
         }
     },
     any(prop, value, ctx) {
