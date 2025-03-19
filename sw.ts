@@ -1,4 +1,4 @@
-const CACHE_NAME = "app-cache-v5";
+const CACHE_NAME = "app-cache-v15";
 const urlsToCache = [
     "/",
     "/index.html",
@@ -8,57 +8,58 @@ const urlsToCache = [
     "/manifest.json"
 ];
 
-const sw = (self as unknown as ServiceWorkerGlobalScope)
+const self = (globalThis as unknown as ServiceWorkerGlobalScope)
 
-// Install event: cache required assets
-sw.addEventListener("install", (event: ExtendableEvent) => {
+self.addEventListener('install', (event) => {
     event.waitUntil(
         caches.open(CACHE_NAME).then((cache) => cache.addAll(urlsToCache)),
     );
+    // Force the waiting service worker to become the active service worker.
+    self.skipWaiting();
 });
 
-// Activate event: remove old caches
-sw.addEventListener("activate", (event: ExtendableEvent) => {
+self.addEventListener("message", (event: ExtendableMessageEvent) => {
+    console.log("Received message in Service Worker:", event.data);
+    if (event.data?.type === "SKIP_WAITING") {
+        self.skipWaiting().then(() => {
+            console.log("skipWaiting() called. New SW should activate soon.");
+        });
+    }
+});
+
+self.addEventListener("activate", (event: ExtendableEvent) => {
+    console.log("New service worker activated.");
     event.waitUntil(
         caches.keys().then((cacheNames) =>
             Promise.all(
                 cacheNames.map((cacheName) => {
                     if (cacheName !== CACHE_NAME) {
+                        console.log("Deleting old cache:", cacheName);
                         return caches.delete(cacheName);
                     }
-                }),
+                })
             )
-        ),
+        )
     );
+
+    // **Force takeover of all clients**
+    self.clients.claim().then(() => {
+        console.log("New service worker now controlling clients.");
+    });
 });
 
 // Fetch event: serve from cache, then network fallback
-sw.addEventListener("fetch", (event: FetchEvent) => {
-    console.log(`   (sw:fetch)`, event.request.url)
+self.addEventListener("fetch", (event: FetchEvent) => {
     event.respondWith(
         caches.match(event.request).then((cachedResponse) => {
             return cachedResponse || fetch(event.request).catch(async (e) => {
                 console.warn(`   (sw:fetch:catch-all)`, event.request.url, e.message)
-
                 const res = await caches.match("/index.html");
                 if (!res)
                     throw new Error(`/index.html cache miss`);
-
                 return res;
             })
-
-            // .catch(() => {
-            //     // If it's a navigation request, return index.html for SPA routing
-            //     if (event.request.mode === "navigate") {
-            //         return caches.match("/index.html").then(res => {
-            //             if (!res)
-            //                 throw new Error(`/index.html cache miss`)
-            //             return res
-            //         })
-            //     }
-
-            //     throw new Error("Resource not found and no network available.");
-            // });
         }),
     );
 });
+

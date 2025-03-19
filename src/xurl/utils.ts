@@ -47,6 +47,7 @@ export function setUrl(
 
 export function createURLSignals(init: string | URL | Location): XURLSignals {
     init = getSubUrl(resolveUrl(init))
+    console.log('createURLSignals', init)
     const loc = parseLocation(init)
     // init = new URL(loc.url)
     const handle = init.searchParams.get('handle')

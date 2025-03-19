@@ -72,7 +72,7 @@ export function getSubUrl(url: string | URL | Location): URL {
     if (host) {
         try {
             const origin = `${protocol}//${host}`;
-            const pathname = `/${pathParts.join("/")}`;
+            const pathname = `/${pathParts.join("/")}${url.pathname.endsWith('/') ? '/' : ''}`;
 
             return new URL(origin + pathname + url.search + url.hash);
         } catch (e) {
