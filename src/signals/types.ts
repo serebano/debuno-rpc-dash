@@ -2,6 +2,7 @@ export type FileEvent = {
     path: string
     file: string
     http: string
+    base: string
     type: "added" | "changed" | "removed"
 }
 

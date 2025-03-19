@@ -9,10 +9,30 @@ export function Folder(
 ) {
   const isOpen = hasSelectedItem(node, currentUrl, depth);
 
+  const dot = (name: string) =>
+    depth === 0
+      ? (
+        <b
+          style={{
+            position: "absolute",
+            right: "10px",
+            top: "0px",
+            opacity: 0.7,
+          }}
+        >
+          <DotIcon
+            state={eventSourcesState.value[`http://${name}/`] ||
+              eventSourcesState.value[`https://${name}/`]}
+            size={10}
+          />
+        </b>
+      )
+      : "";
+
   if (shouldCombinePath(node)) {
     const [displayPath, finalNode, fullPath] = getNestedPath(node, name);
     return (
-      <li data-depth={depth} class="folder">
+      <li data-depth={depth} class={depth > 0 ? "folder" : "folder_public"}>
         <details open={isOpen}>
           <summary>
             <div class="label-container">
@@ -22,6 +42,7 @@ export function Folder(
                 dangerouslySetInnerHTML={{ __html: displayPath }}
               />
             </div>
+            {dot(fullPath)}
           </summary>
           <TreeView
             node={finalNode}
@@ -33,25 +54,6 @@ export function Folder(
     );
   }
 
-  const dot = depth === 0
-    ? (
-      <b
-        style={{
-          position: "absolute",
-          right: "10px",
-          top: "0px",
-          opacity: 0.7,
-        }}
-      >
-        <DotIcon
-          state={eventSourcesState.value[`http://${name}`] ||
-            eventSourcesState.value[`https://${name}`]}
-          size={10}
-        />
-      </b>
-    )
-    : "";
-
   return (
     <li data-depth={depth} class={depth > 0 ? "folder" : "folder_public"}>
       <details open={isOpen}>
@@ -59,7 +61,7 @@ export function Folder(
           <div class="label-container">
             <span class="label" title={name}>{name}</span>
           </div>
-          {dot}
+          {dot(name)}
         </summary>
         <TreeView
           node={node}

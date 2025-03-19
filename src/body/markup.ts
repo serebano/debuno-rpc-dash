@@ -15,9 +15,15 @@ import { xurl } from "@signals";
 
 // Then register the languages you need
 hljs.registerLanguage('ts', typescript);
+hljs.registerLanguage('tsx', typescript);
+hljs.registerLanguage('d.ts', typescript);
+
 hljs.registerLanguage('js', javascript);
+hljs.registerLanguage('jsx', javascript);
+
 hljs.registerLanguage('javascript', javascript);
 hljs.registerLanguage('typescript', typescript);
+
 hljs.registerLanguage('json', json);
 hljs.registerLanguage('xml', xml);
 hljs.registerLanguage('html', xml);
@@ -87,15 +93,15 @@ export function markup(reqLoc: RequestLocation, sourceCode: string, urls: string
                 </div>`
 
     const FileSwitch = `<div style="display:flex;gap:10px;">
-                ${reqLoc.extension === 'ts' || reqLoc.extension === 'js' ? Dir : ''}
-                ${reqLoc.extension === 'ts' ? Ext : ''}
+                ${['ts', 'tsx', 'js', 'jsx'].includes(reqLoc.extension) ? Dir : ''}
+                ${['ts', 'tsx'].includes(reqLoc.extension) ? Ext : ''}
             </div>`
 
     return `
     <div id="preview" class="main">
         <div class="header">
 
-            ${reqLoc.extension === 'ts' || reqLoc.extension === 'js' ? FileSwitch : ''}
+            ${['ts', 'tsx', 'js', 'jsx'].includes(reqLoc.extension) ? FileSwitch : ''}
 
             <span id="fileName">
                 <a class="link" id="current-file" href="${new URL('./' + reqLoc.fileName, reqLoc.url) + typeSearchParam}" style="display:flex;align-items:center;justify-content:center;">

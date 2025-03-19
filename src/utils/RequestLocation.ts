@@ -62,21 +62,19 @@ export function getLocation(input: Request, base?: string | RPCRoute): RequestLo
 
 
     const contentTypeMap = {
-        '.d.ts': 'application/typescript',
-        '.js.map': 'application/json',
-        '.ts.map': 'application/json',
-        '.d.ts.map': 'application/json',
-        '.ts.raw': 'text/plain',
         'ts': 'application/typescript',
+        'tsx': 'application/typescript',
+        'd.ts': 'application/typescript',
         'js': 'application/javascript',
+        'jsx': 'application/javascript',
         'json': 'application/json',
+        'map': 'application/json',
         'html': 'text/html',
         'css': 'text/css',
         'txt': 'text/plain',
         'md': 'text/plain',
         'sh': 'text/plain',
-        '.map': 'application/json',
-        '.raw': 'text/plain',
+        'raw': 'text/plain',
         '': 'text/plain',
     } as const
 

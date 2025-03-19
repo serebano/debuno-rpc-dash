@@ -114,10 +114,10 @@ export function getState(readyState: 0 | 1 | 2): { readonly state: "OPEN" | "CLO
 // export const host = computed(() => origin.value ? new URL(origin.value).host : null)
 
 
-export function createEventSource(origin: string | URL): EventSource {
-    origin = new URL(origin).origin
+export function createEventSource(origin: string): EventSource {
+    // origin = new URL(origin).origin
 
-    const es = new EventSource(new URL('/', origin))
+    const es = new EventSource(origin)
     const close = es.close
 
     es.close = () => {
@@ -152,8 +152,8 @@ export function createEventSource(origin: string | URL): EventSource {
     })
 
     es.addEventListener('origins', e => {
-        const data = JSON.parse(e.data) as ({ file: string, http: string }[])
-        setOrigins(data.map(v => v.http))
+        const data = JSON.parse(e.data) as ({ file: string, http: string, base: string }[])
+        setOrigins(data.map(v => v.http + v.base))
     })
 
     es.addEventListener('files', (e) => {

@@ -11,6 +11,13 @@
     "preview": "deno run -A --node-modules-dir npm:vite preview",
     "serve": "deno task build && deno run -A serve.ts"
   },
+  "lint": {
+    "rules": {
+      "exclude": [
+        "no-explicit-any"
+      ]
+    }
+  },
   "compilerOptions": {
     "lib": [
       "ES2020",
@@ -37,12 +44,5 @@
     "@xurl": "./src/xurl.ts",
     "@xurl/": "./src/xurl/",
     "@config": "./src/config.ts"
-  },
-  "lint": {
-    "rules": {
-      "exclude": [
-        "no-explicit-any"
-      ]
-    }
   }
 }

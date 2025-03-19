@@ -20,17 +20,35 @@ export const xurl = new XURL(location, {
             .finally(() => console.log(`\n\t\t\ code @ ${value} OK\n\n`))
     },
     origin(value, xurl) {
+
         if (xurl.host === "blank" || xurl.host === 'index')
             return;
 
-        if (origins.value.length === 0) {
-            localStorage.setItem('origin', value)
-            const origins = getOrigins()
-            const exists = !!origins.find(o => o === value)
-            if (!exists) {
-                setOrigins([...origins, value])
+        fetch(xurl.href, {
+            method: 'HEAD'
+        }).then(res => {
+            const eventSourceEndpoint = res.headers.get('x-base-url')
+            console.log(`eventSourceEndpoint: ${eventSourceEndpoint}`)
+            if (eventSourceEndpoint) {
+                localStorage.setItem('origin', eventSourceEndpoint)
+                const origins = getOrigins()
+                const exists = !!origins.find(o => o === eventSourceEndpoint)
+                if (!exists) {
+                    setOrigins([...origins, eventSourceEndpoint])
+                }
             }
-        }
+        })
+
+        // return;
+
+        // if (origins.value.length === 0) {
+        //     localStorage.setItem('origin', value)
+        //     const origins = getOrigins()
+        //     const exists = !!origins.find(o => o === value)
+        //     if (!exists) {
+        //         setOrigins([...origins, value])
+        //     }
+        // }
     },
     any(prop, value, ctx) {
         // @ts-ignore .

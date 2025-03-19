@@ -61,8 +61,13 @@ export function fileTypeClass(file: string): string {
                     return 'css';
                 case 'sh':
                     return 'shell';
+                case 'd.ts':
+                    return 'dts';
                 case 'ts':
                     return 'typescript';
+                case 'tsx':
+                    return 'tsx';
+
                 case 'js':
                     return 'javascript';
                 case 'json':
