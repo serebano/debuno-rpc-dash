@@ -4,6 +4,7 @@ import config from "@config";
 import type { JSX } from "preact";
 import { useState } from "preact/hooks";
 import Icon from "./icons/icon.tsx";
+import CodIcon from "./codicon/CodIcon.tsx";
 
 const iconProps = {
   size: 256,
@@ -45,12 +46,14 @@ export function Welcome() {
               e.preventDefault();
               xurl.host = origin;
             }}
+            style={{ display: "flex", alignItems: "center", gap: "12px" }}
           >
+            <CodIcon name="arrow-right" size={28} />
+
             <input
               style={{
                 borderRadius: "50px",
                 padding: "10px 20px",
-                marginBottom: "10px",
               }}
               type="text"
               value={origin}

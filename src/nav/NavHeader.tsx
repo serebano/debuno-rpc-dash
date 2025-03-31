@@ -1,5 +1,7 @@
 // import Icon from "../icons/icon.tsx";
 import { xurl } from "@signals";
+import DotIcon from "../icons/DotIcon.tsx";
+import CodIcon from "../codicon/CodIcon.tsx";
 // import state from "./state.ts";
 
 // const iconProps = {
@@ -21,7 +23,9 @@ export default function NavHeader() {
           xurl.back();
         }}
       >
-        <div class="goback">&#10094;</div>
+        <div class="goback">
+          <CodIcon name="arrow-left" style={{ fontWeight: "bold" }} />
+        </div>
       </a>
 
       <a

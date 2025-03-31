@@ -109,6 +109,10 @@ export function markup(reqLoc: RequestLocation, sourceCode: string, urls: string
                 </a>
             </span>
 
+            <a href="${reqLoc.origin}/${reqLoc.fileName}" target="_blank">
+                open
+            </a>
+
             <a class="link" id="current-href" href="${new URL('./' + [reqLoc.fileName, reqLoc.lineNumber, reqLoc.columnNumber].join(':'), reqLoc.url) + typeSearchParam}">
                 <span id="current-line">${reqLoc.lineNumber}</span>:<span id="current-column">${reqLoc.columnNumber}</span>
             </a>
