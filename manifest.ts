@@ -6,6 +6,7 @@ const manifest = {
     "short_name": config.name,
     "description": config.description,
     "start_url": "/",
+    "id": "/",
     "display": "standalone",
     "background_color": "#21252b",
     "theme_color": "#21252b",
