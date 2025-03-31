@@ -44,6 +44,9 @@ function showUpdateNotification() {
 
         if (registration?.waiting) {
             console.log("Waiting SW state before update:", registration.waiting.state);
+            if (registration.waiting.state === 'installed') {
+                window.location.reload();
+            }
             registration.waiting.postMessage({ type: "SKIP_WAITING" });
 
             registration.waiting.addEventListener("statechange", () => {
