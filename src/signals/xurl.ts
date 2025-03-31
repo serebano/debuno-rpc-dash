@@ -1,9 +1,9 @@
 import { XURL, type XURLType } from "../xurl.ts";
 import * as utils from "@utils"
 import * as sse from "@signals/sse.ts"
-import origins from "@signals/origins.ts";
 import { setOrigins, setError, setCode, getOrigins } from "@actions";
 import config from "@config";
+import { endpoint, endpoints } from "@signals";
 
 export const xurl = new XURL(location, {
     href(value, xurl) {
@@ -15,40 +15,27 @@ export const xurl = new XURL(location, {
         document.title = xurl.host + xurl.pathname + xurl.search
 
         utils.fetchCode(value)
+            .then(res => {
+                if (res.endpoint) {
+                    endpoint.value = res.endpoint
+                    const _endpoints = endpoints.value
+                    endpoints.value = [...new Set([..._endpoints, res.endpoint])]
+                    // console.log(`endpoints: ${endpoints.value}`)
+
+                    localStorage.setItem('origin', res.endpoint)
+
+                    const origins = getOrigins()
+                    const exists = !!origins.find(o => o === res.endpoint)
+                    if (!exists) {
+                        setOrigins([...origins, res.endpoint])
+                    }
+                }
+
+                return res
+            })
             .then(setCode)
             .catch(setError)
             .finally(() => console.log(`\n\t\t\ code @ ${value} OK\n\n`))
-    },
-    origin(value, xurl) {
-
-        if (xurl.host === "blank" || xurl.host === 'index')
-            return;
-
-        fetch(xurl.href, {
-            method: 'HEAD'
-        }).then(res => {
-            const eventSourceEndpoint = res.headers.get('x-base-url')
-            console.log(`eventSourceEndpoint: ${eventSourceEndpoint}`)
-            if (eventSourceEndpoint) {
-                localStorage.setItem('origin', eventSourceEndpoint)
-                const origins = getOrigins()
-                const exists = !!origins.find(o => o === eventSourceEndpoint)
-                if (!exists) {
-                    setOrigins([...origins, eventSourceEndpoint])
-                }
-            }
-        })
-
-        // return;
-
-        // if (origins.value.length === 0) {
-        //     localStorage.setItem('origin', value)
-        //     const origins = getOrigins()
-        //     const exists = !!origins.find(o => o === value)
-        //     if (!exists) {
-        //         setOrigins([...origins, value])
-        //     }
-        // }
     },
     any(prop, value, ctx) {
         // @ts-ignore .

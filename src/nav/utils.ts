@@ -83,15 +83,16 @@ export function fileTypeClass(file: string): string {
     }
 }
 
-export function hasSelectedItem(node: TreeNode | string, currentUrl: string, depth: number): boolean {
+export function hasSelectedItem(node: TreeNode | string, endpoint: string, currentUrl: string, depth: number): boolean {
     if (!currentUrl)
         return false;
 
     if (typeof node === 'string') {
-        return currentUrl.startsWith(node) || (depth === 0 && (new URL(currentUrl).pathname === '/' && node.startsWith(currentUrl)))
+        return currentUrl.startsWith(node) ||
+            ((currentUrl === endpoint && node.startsWith(currentUrl)))
     }
 
-    return Object.values(node).some(value => hasSelectedItem(value, currentUrl, depth));
+    return Object.values(node).some(value => hasSelectedItem(value, endpoint, currentUrl, depth));
 }
 
 

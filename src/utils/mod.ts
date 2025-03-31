@@ -1,5 +1,10 @@
-import type { RequestLocation } from "@utils/RequestLocation.ts";
 import type { XURL } from "@xurl";
+import { xurl } from "@signals";
+
+export function getFileExtension(filename: string): string | null {
+    const match = filename.match(/\.([a-zA-Z0-9.]+)$/);
+    return match ? match[1] : null;
+}
 
 export function getChanges(oldArray: string[], newArray: string[]): { added: string[]; removed: string[]; } {
     const oldSet = new Set(oldArray);
@@ -84,7 +89,13 @@ export function getSubUrl(url: string | URL | Location): URL {
     }
 }
 
-export async function fetchCode(url: string | URL): Promise<{ error: string | null, code: string | null }> {
+export async function fetchCode(url: string | URL): Promise<{
+    error: string | null,
+    code: string | null,
+    url: string
+    endpoint: string
+    filePath: string
+}> {
     const request = new Request(url, {
         headers: {
             'x-dest': 'document'
@@ -93,6 +104,9 @@ export async function fetchCode(url: string | URL): Promise<{ error: string | nu
 
     const response = await fetch(request);
     const filePath = response.headers.get('x-file-path')!
+    const endpoint = response.headers.get('x-base-url')!
+
+    console.log({ endpoint, filePath })
 
     if (!response.ok) {
         return Promise.reject({
@@ -102,7 +116,10 @@ export async function fetchCode(url: string | URL): Promise<{ error: string | nu
     }
 
     return {
-        code: `${(await response.text())}\n//# ${request.url}\n//# file://${filePath}`,
+        url: request.url,
+        endpoint,
+        filePath,
+        code: `${(await response.text())}\n//# ${request.url}\n//# ${filePath}\n//# ${endpoint}`,
         error: null
     }
 }
@@ -137,10 +154,12 @@ export function replaceImportAndExportPathsWithLinks(
     });
 }
 
-export function linkImports(sourceCode: string, loc: RequestLocation, urls: string[]): string {
+export function linkImports(sourceCode: string, urls: string[]): string {
     // console.log('linkImports/modules', modules)
+    const loc = xurl
 
     const importLink = (specifier: string, url: string) => `&alt;a&asp;class="mod-path&asp;link"&asp;title="Open ${specifier} [Cmd + Click]"&asp;onclick="goto('${url}'); return false;"&agt;${specifier}&alt;/a&agt;`
+    const importLinkExternal = (specifier: string, url: string) => `&alt;a&asp;class="mod-path&asp;link"&asp;title="Open ${specifier}"&asp;onclick="window.open('${url}', 'ext'); return false;"&agt;${specifier}&alt;/a&agt;`
 
     return replaceImportAndExportPathsWithLinks(sourceCode, (importPath: string) => {
 
@@ -153,8 +172,8 @@ export function linkImports(sourceCode: string, loc: RequestLocation, urls: stri
             return importLink(importPath, new URL(entry, loc.origin).href);
 
         return importPath.startsWith('.') || importPath.startsWith(loc.origin)
-            ? importLink(importPath, new URL(importPath, loc.url).href)
-            : importPath;
+            ? importLink(importPath, new URL(importPath, loc.href).href)
+            : importLinkExternal(importPath, new URL(importPath, loc.href).href);
     });
 }
 

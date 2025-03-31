@@ -1,4 +1,4 @@
-import { computed } from "@preact/signals";
+import { computed, signal } from "@preact/signals";
 import signals from "@signals";
 import type { NavigationState } from "./types.ts";
 
@@ -6,6 +6,7 @@ export default computed<NavigationState>(() => {
     const urls = signals.files.value
     const origin = signals.xurl.origin
     const pathname = signals.xurl.pathname
+    const endpoint = signals.endpoint.value!
 
     const typeParam = signals.xurl.search + signals.xurl.hash
     const currentUrl = origin + pathname + typeParam
@@ -19,6 +20,9 @@ export default computed<NavigationState>(() => {
 
     return {
         mapping,
+        endpoint,
         currentUrl
     }
 })
+
+export const details = signal<Record<string, 'open' | 'close'>>({})

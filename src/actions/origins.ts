@@ -29,8 +29,8 @@ export function setOrigins(value: Origins) {
         origins.value = newValue
 }
 
-export function removeOrigin(value: string | URL) {
-    const origin = new URL(value).origin
+export function removeOrigin(origin: string | URL) {
+    origin = String(origin)
     const newOrigins = origins.value.filter(val => val !== origin)
     console.log(`removeOrigin(${origin})`, newOrigins)
     setOrigins(newOrigins)

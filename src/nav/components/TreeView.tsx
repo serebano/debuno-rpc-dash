@@ -5,12 +5,14 @@ import type { TreeNode } from "../types.ts";
 
 interface TreeViewProps {
   node: TreeNode;
+  parentName: string;
   currentUrl: string;
+  endpoint: string;
   depth?: number;
 }
 
 export function TreeView(
-  { node, currentUrl, depth = 0 }: TreeViewProps,
+  { node, parentName, currentUrl, endpoint, depth = 0 }: TreeViewProps,
 ) {
   const files = Object.keys(node); //.toSorted()
 
@@ -38,13 +40,16 @@ export function TreeView(
             <File
               name={key}
               url={value}
+              endpoint={endpoint}
               currentUrl={currentUrl}
             />
           )
           : (
             <Folder
+              parentName={parentName}
               name={key}
               node={value}
+              endpoint={endpoint}
               currentUrl={currentUrl}
               depth={depth}
             />

@@ -1,3 +1,5 @@
+export { default as endpoints } from './endpoints.ts'
+export { default as endpoint } from './endpoint.ts'
 export { default as origins } from './origins.ts'
 export { default as files } from './files.ts'
 export { default as error } from './error.ts'

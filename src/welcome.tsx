@@ -18,7 +18,8 @@ const iconProps = {
 
 export function Welcome() {
   const [origin, setOrigin] = useState(
-    new URL(localStorage.getItem("origin") || "http://localhost:8080").host,
+    new URL(localStorage.getItem("origin") || "http://localhost:8080").href,
+    // .split("://").pop(),
   );
 
   const goto: JSX.MouseEventHandler<HTMLAnchorElement> = (e) => {
@@ -44,7 +45,7 @@ export function Welcome() {
           <form
             onSubmit={(e) => {
               e.preventDefault();
-              xurl.host = origin;
+              xurl.goto(origin);
             }}
             style={{ display: "flex", alignItems: "center", gap: "12px" }}
           >
@@ -71,22 +72,26 @@ export function Welcome() {
                 config.protocolHandler.url.replace(
                   "%s",
                   encodeURIComponent(
-                    config.protocolHandler.protocol + "://" + origin,
+                    config.protocolHandler.protocol + "://" +
+                      origin.split("://").pop(),
                   ),
                 ),
                 location.origin,
               )}`}
               onClick={goto}
             >
-              {config.protocolHandler.protocol}://{origin}
+              {config.protocolHandler.protocol}://{origin.split("://").pop()}
             </a>
           </li>
           <li>
             <p>
               Using <b>{location.origin}</b> origin
             </p>
-            <a href={`${location.origin}/${origin}`} onClick={goto}>
-              {location.origin}/{origin}
+            <a
+              href={`${location.origin}/${origin.split("://").pop()}`}
+              onClick={goto}
+            >
+              {location.origin}/{origin.split("://").pop()}
             </a>
           </li>
         </ul>
