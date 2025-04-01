@@ -1,4 +1,5 @@
-const CACHE_NAME = "app-cache-v20";
+// @ts-ignore .
+const CACHE_NAME = 'v' + DASH_VERSION;
 
 const urlsToCache = [
     "/",

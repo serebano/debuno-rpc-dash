@@ -3,9 +3,20 @@ import * as utils from "@utils"
 import * as sse from "@signals/sse.ts"
 import { setOrigins, setError, setCode, getOrigins } from "@actions";
 import config from "@config";
-import { endpoint, endpoints } from "@signals";
+import { endpoint } from "@signals";
 
 export const xurl = new XURL(location, {
+    hash(value, ctx) {
+        value = decodeURIComponent(value.slice(1))
+        if (value) {
+            console.log(`hashchange`, value)
+            try {
+                ctx.goto(value)
+            } catch (e) {
+                console.warn(`hashchange/error`, e)
+            }
+        }
+    },
     href(value, xurl) {
         if (xurl.host === "blank" || xurl.host === 'index') {
             document.title = config.name
@@ -18,8 +29,8 @@ export const xurl = new XURL(location, {
             .then(res => {
                 if (res.endpoint) {
                     endpoint.value = res.endpoint
-                    const _endpoints = endpoints.value
-                    endpoints.value = [...new Set([..._endpoints, res.endpoint])]
+                    // const _endpoints = endpoints.value
+                    // endpoints.value = [...new Set([..._endpoints, res.endpoint])]
                     // console.log(`endpoints: ${endpoints.value}`)
 
                     localStorage.setItem('origin', res.endpoint)

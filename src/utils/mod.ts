@@ -1,5 +1,6 @@
 import type { XURL } from "@xurl";
 import { xurl } from "@signals";
+import config from "@config";
 
 export function getFileExtension(filename: string): string | null {
     const match = filename.match(/\.([a-zA-Z0-9.]+)$/);
@@ -47,7 +48,7 @@ export function resolveUrl(url: string | URL | Location | XURL): URL {
     const href = String(url)
 
     if (!href.startsWith(location.origin)) {
-        if (href.startsWith('http')) {
+        if (href.startsWith('http') || href.startsWith(config.protocolHandler.protocol)) {
             url = new URL(href)
             url = new URL('/' + url.host + url.pathname + url.search + url.hash, location.origin)
         } else {
