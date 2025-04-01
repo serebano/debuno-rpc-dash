@@ -1,5 +1,5 @@
 body {
-  background: #21252b;
+  background: #282c34;
   color: #abb2bf;
   margin: 0;
   padding: 0;
@@ -28,7 +28,7 @@ a:hover {
 }
 #nav {
   width: 250px;
-  background: #21252b;
+  /* background: #21252b; */
   position: relative;
   overflow: auto;
 }
@@ -37,4 +37,13 @@ a:hover {
   position: relative;
   width: calc(100vw - 250px);
   height: 100vh;
+}
+
+.centered {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+  position: relative;
+  align-items: center;
+  justify-content: center;
 }

@@ -13,12 +13,17 @@ a:hover {
   height: 48px;
   display: flex;
   align-items: center;
-  padding: 0 8px 0 0;
+  padding: 0 8px 0 22px;
   gap: 5px;
   color: rgba(255, 255, 255, 0.4);
   background: rgb(33 37 43);
   font-size: 14px;
   font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  font-weight: 200;
+}
+
+.nav-header b {
+  font-weight: 500;
 }
 
 .goback {
@@ -54,7 +59,7 @@ a:hover {
   padding: 0;
   cursor: pointer;
   touch-action: none;
-  padding: 8px 0px 20px 16px;
+  padding: 12px 0px 20px 22px;
 }
 
 .nav ul {

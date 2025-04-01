@@ -62,6 +62,8 @@ export function createURLSignals(init: string | URL | Location): XURLSignals {
     }
 
     const signals: XURLSignals = {
+        base: signal<string>('/'),
+        status: signal('IDLE'),
         protocol: signal<string>(init.protocol),
         port: signal<string>(init.port),
         hostname: signal<string>(init.hostname),

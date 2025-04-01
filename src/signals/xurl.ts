@@ -1,9 +1,9 @@
-import { XURL, type XURLType } from "../xurl.ts";
+import { XURL, type XURLType } from "@xurl";
 import * as utils from "@utils"
 import * as sse from "@signals/sse.ts"
-import { setOrigins, setError, setCode, getOrigins } from "@actions";
+import { setError, setCode, addOrigin } from "@actions";
 import config from "@config";
-import { endpoint } from "@signals";
+import { addr } from "@signals";
 
 export const xurl = new XURL(location, {
     hash(value, ctx) {
@@ -18,35 +18,38 @@ export const xurl = new XURL(location, {
         }
     },
     href(value, xurl) {
-        if (xurl.host === "blank" || xurl.host === 'index') {
-            document.title = config.name
-            return;
+
+        if (['index', 'about'].includes(xurl.host)) {
+            document.title = config.name + ' ' + xurl.host
+            return
         }
 
         document.title = xurl.host + xurl.pathname + xurl.search
 
+        xurl.status = 'LOADING'
+        addr.host.value = xurl.host
+
         utils.fetchCode(value)
             .then(res => {
+
+
+                xurl.status = res.error ? 'ERROR' : 'OK'
+
                 if (res.endpoint) {
-                    endpoint.value = res.endpoint
-                    // const _endpoints = endpoints.value
-                    // endpoints.value = [...new Set([..._endpoints, res.endpoint])]
-                    // console.log(`endpoints: ${endpoints.value}`)
+                    xurl.base = res.endpoint
+                    addr.base.value = xurl.base
+                    addr.path.value = xurl.pathname.replace(xurl.base, '')
+
+                    addOrigin(res.endpoint)
+                        .map(sse.createEventSource)
 
                     localStorage.setItem('origin', res.endpoint)
-
-                    const origins = getOrigins()
-                    const exists = !!origins.find(o => o === res.endpoint)
-                    if (!exists) {
-                        setOrigins([...origins, res.endpoint])
-                    }
                 }
 
                 return res
             })
             .then(setCode)
             .catch(setError)
-            .finally(() => console.log(`\n\t\t\ code @ ${value} OK\n\n`))
     },
     any(prop, value, ctx) {
         // @ts-ignore .

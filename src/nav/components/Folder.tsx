@@ -35,7 +35,7 @@ export function Folder(
       }}
     >
       <DotIcon
-        state={eventSourcesState.value[name]}
+        state={eventSourcesState.value![name]}
         size={10}
       />
     </b>

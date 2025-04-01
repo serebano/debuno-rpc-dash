@@ -1,25 +1,31 @@
 import { getChanges } from "@utils";
 import { removeOriginFiles } from "@actions";
 import { xurl, origins, type Origins } from "@signals";
+import endpoint from "@signals/endpoint.ts";
 
-export function getOrigins() {
+export function getOrigins(): Origins {
     return origins.value
 }
 
-export function setOrigins(value: Origins) {
+export function addOrigin(value: string): Origins {
+    return setOrigins([...new Set([...getOrigins(), value])])
+}
+
+export function setOrigins(value: Origins): Origins {
     const oldValue = origins.value
-    const newValue = value //[...new Set([...oldValue, ...value])]
+    const newValue = value
 
     const changes = getChanges(oldValue, newValue)
     const hasChanged = changes.added.length || changes.removed.length
-    console.log(`changes`, changes)
 
     if (hasChanged) {
+        console.log(`changes`, changes)
+
         if (changes.removed) {
             for (const removedOrigin of changes.removed) {
                 removeOriginFiles(removedOrigin)
-                if (xurl.origin === removedOrigin) {
-                    xurl.goto('/index')
+                if (endpoint.value === removedOrigin) {
+                    xurl.goto('/indexxxx')
                 }
             }
         }
@@ -27,11 +33,13 @@ export function setOrigins(value: Origins) {
 
     if (hasChanged)
         origins.value = newValue
+
+    return origins.value
 }
 
-export function removeOrigin(origin: string | URL) {
+export function removeOrigin(origin: string | URL): Origins {
     origin = String(origin)
     const newOrigins = origins.value.filter(val => val !== origin)
     console.log(`removeOrigin(${origin})`, newOrigins)
-    setOrigins(newOrigins)
+    return setOrigins(newOrigins)
 }

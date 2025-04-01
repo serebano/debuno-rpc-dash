@@ -7,6 +7,8 @@ export type XURLDir = typeof config.srcKey | typeof config.genKey
 export type XURLExt = 'ts' | 'js'
 
 export interface XURLType {
+    status: 'IDLE' | 'LOADING' | 'ERROR' | 'OK',
+    base: string;
     protocol: string;
     port: string;
     hostname: string;

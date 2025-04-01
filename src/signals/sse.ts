@@ -2,90 +2,48 @@ import { computed, signal, type Signal } from "@preact/signals";
 import { xurl, origins, type FileEvent } from "@signals";
 import { addFile, removeFile, setFiles, setError, setCode, removeOrigin, setOrigins } from "@actions";
 import { fetchCode } from "@utils";
+import type endpoint from "@signals/endpoint.ts";
 
 // export const events = new Map<string, EventSource>()
 
 export const eventSourcesMap = new Map<string, EventSource>()
 export const eventSourcesStateMap = new WeakMap<EventSource, Signal<0 | 1 | 2>>()
 
+export const eventSourcesState = signal<Record<string, "OPEN" | "CLOSED" | "CONNECTING">>()
+
+export const createEventSource = (endpoint: string) => {
+    if (eventSourcesMap.has(endpoint)) {
+        return eventSourcesMap.get(endpoint)!
+    } else {
+        const instance = createEventSourceInstance(endpoint)
+        eventSourcesMap.set(endpoint, instance)
+
+        return instance
+    }
+}
+
 export const eventSources = computed(() => {
-    return origins.value.reduce((acc, origin) => {
-        if (eventSourcesMap.has(origin)) {
-            acc[origin] = eventSourcesMap.get(origin)!
-        } else {
-            const es = createEventSource(origin)
-            eventSourcesMap.set(origin, es)
-            acc[origin] = es
-        }
+    return origins.value.reduce((acc, endpoint) => {
+        acc[endpoint] = createEventSource(endpoint)
         return acc
     }, {} as Record<string, EventSource>)
 })
 
-export const eventSourcesState = computed(() => {
-    const obj = eventSources.value
-    return Object.keys(obj).reduce((acc, origin) => {
-        const signal = eventSourcesStateMap.get(obj[origin])
-        if (signal) {
-            acc[origin] = getState(signal.value).state
-        }
-        return acc
-    }, {} as Record<string, "OPEN" | "CLOSED" | "CONNECTING">)
-})
-
-eventSourcesState.subscribe(val => {
-    console.log('eventSourcesState', val)
-})
-
-// export const oindex = signal(origins.value.length - 1)
-// export const origin = computed(() => origins.value.at(oindex.value))
-// export const oevent = computed(() => origin.value ? events.get(origin.value) : undefined)
-
-// export function changeOrigin() {
-//     const originsSize = origins.value.length
-//     const indexValue = oindex.value
-
-//     console.log(`changeOrigin | idx: ${indexValue} | size: ${originsSize}`)
-
-//     if (originsSize > 0) {
-//         if (indexValue < originsSize) {
-//             oindex.value = indexValue + 1
-//         } else {
-//             oindex.value = 0
+// export const eventSourcesState = computed(() => {
+//     const obj = eventSources.value
+//     return Object.keys(obj).reduce((acc, origin) => {
+//         const signal = eventSourcesStateMap.get(obj[origin])
+//         if (signal) {
+//             acc[origin] = getState(signal.value).state
 //         }
-//     }
-// }
-
-// let prevOrigin = origin.value
-
-// origins.subscribe(o => {
-//     console.log(` *  on$origins:`, o)
+//         return acc
+//     }, {} as Record<string, "OPEN" | "CLOSED" | "CONNECTING">)
 // })
 
-// origin.subscribe(o => {
-//     console.log(` * on$origin:`, o)
-
-//     if (prevOrigin && prevOrigin !== o) {
-//         const prevEvSrc = events.get(prevOrigin)
-//         if (prevEvSrc) {
-//             prevEvSrc.close()
-//             events.delete(prevOrigin)
-//         }
-//     }
-
-//     if (!o) {
-//         console.log(` * cannot elect origin`, origins.value.length, 'available')
-//         prevOrigin = undefined
-//         return;
-//     }
-
-//     console.log(' * elected origin:', prevOrigin, ' >> ', o)
-
-//     prevOrigin = o
-
-//     if (!events.has(o))
-//         events.set(o, createEventSource(o))
-// })
-
+origins.subscribe(endpoints => {
+    endpoints.map(createEventSource)
+    // console.log('endpoints', endpoints)
+})
 
 export function getState(readyState: 0 | 1 | 2): { readonly state: "OPEN" | "CLOSED" | "CONNECTING", readonly readyState: number; readonly 1: "OPEN"; readonly 2: "CLOSED"; readonly 0: "CONNECTING"; readonly OPEN: boolean; readonly CLOSED: boolean; readonly CONNECTING: boolean; } {
     const { CLOSED, CONNECTING, OPEN } = EventSource
@@ -114,10 +72,8 @@ export function getState(readyState: 0 | 1 | 2): { readonly state: "OPEN" | "CLO
 // export const host = computed(() => origin.value ? new URL(origin.value).host : null)
 
 
-export function createEventSource(origin: string): EventSource {
-    // origin = new URL(origin).origin
-
-    const es = new EventSource(origin)
+export function createEventSourceInstance(endpoint: string): EventSource {
+    const es = new EventSource(endpoint)
     const close = es.close
 
     es.close = () => {
@@ -131,23 +87,31 @@ export function createEventSource(origin: string): EventSource {
     readyState.subscribe(rs => {
         const state = getState(rs).state
 
-        console.log(`!!readyState:`, origin, state)
+        console.log(`[sse] readyState`, state, endpoint)
+
+        eventSourcesState.value = {
+            ...eventSourcesState.value,
+            [endpoint]: state
+        }
 
         if (state === 'CLOSED') {
-            removeOrigin(origin)
-            eventSourcesMap.delete(origin)
+            // removeOrigin(origin)
+            eventSourcesMap.delete(endpoint)
             eventSourcesStateMap.delete(es)
         }
     })
 
 
-    es.addEventListener('open', () => {
+    es.addEventListener('open', (e) => {
+        // console.log(`   /sse on:open`, e)
+
         readyState.value = es.readyState as any
     })
 
-    es.addEventListener('error', () => {
+    es.addEventListener('error', (e) => {
+        // console.log(`   /sse on:error`, e)
+
         readyState.value = es.readyState as any
-        // console.log(`   /sse on:error`, origin)
         // removeOrigin(origin)
     })
 

@@ -24,6 +24,9 @@
       "DOM",
       "DOM.Iterable",
       "deno.window",
+      "deno.ns",
+      "deno.worker",
+      "esnext",
       "webworker"
     ],
     "jsx": "react-jsx",

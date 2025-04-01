@@ -129,6 +129,14 @@ export class XURL {
         return this.#signals.params.value
     }
 
+    get base() {
+        return this.#signals.base.value
+    }
+
+    set base(value: string) {
+        this.#signals.base.value = new URL(value, this.origin).pathname
+    }
+
     get dir(): XURLDir {
         return this.#signals.dir.value
     }
@@ -186,6 +194,15 @@ export class XURL {
         this.#signals.state.value = value
     }
 
+
+    get status() {
+        return this.#signals.status.value
+    }
+
+    set status(value) {
+        this.#signals.status.value = value
+    }
+
     get protocol(): string {
         return this.#signals.protocol.value
     }
@@ -228,6 +245,10 @@ export class XURL {
 
     get origin(): string {
         return this.#signals.origin.value;
+    }
+
+    get relativePath(): string {
+        return computed(() => this.pathname.replace(this.base, '')).value
     }
 
     get pathname(): string {

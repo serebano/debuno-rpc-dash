@@ -1,3 +1,5 @@
+registerServiceWorker();
+
 export function registerServiceWorker() {
     if ("serviceWorker" in navigator) {
         navigator.serviceWorker.register("/sw.js").then((registration) => {
@@ -6,7 +8,7 @@ export function registerServiceWorker() {
             // Check for updates periodically (every 1 hour)
             setInterval(() => {
                 registration.update();
-            }, 10 * 1000);
+            }, 100 * 1000);
 
             // Detect a new service worker waiting
             registration.addEventListener("updatefound", () => {
@@ -27,6 +29,26 @@ export function registerServiceWorker() {
             console.log("Service worker changed. Reloading page...");
             window.location.reload();
         });
+    }
+
+
+    if ("launchQueue" in window) {
+        console.log(`          [launchQueue] setConsumer `)
+        // @ts-ignore .
+        window.launchQueue.setConsumer(launchParams => {
+            console.log(`launchParams`, launchParams)
+
+            if (launchParams.targetURL) {
+                const url = new URL(launchParams.targetURL);
+                const uri = decodeURIComponent(url.hash.slice(1))
+                if (uri) {
+                    console.log(`   [launchQueue] ${uri}`);
+                    location.hash = uri
+                }
+            }
+        });
+    } else {
+        console.log(`          [launchQueue] not supported `)
     }
 }
 

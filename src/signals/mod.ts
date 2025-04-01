@@ -1,4 +1,4 @@
-export { default as endpoints } from './endpoints.ts'
+export * as addr from './addr.ts'
 export { default as endpoint } from './endpoint.ts'
 export { default as origins } from './origins.ts'
 export { default as files } from './files.ts'

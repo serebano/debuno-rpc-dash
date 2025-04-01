@@ -1,8 +1,8 @@
-import config from "@config";
+import config from "./src/config.ts";
 import { writeFile } from "node:fs/promises";
 
 const manifest = {
-    "name": config.name,
+    "name": config.name + ` ${config.version}`,
     "short_name": config.name,
     "description": config.description + ` ${config.version}`,
     "start_url": "/",
@@ -24,8 +24,11 @@ const manifest = {
             "url": config.protocolHandler.url
         }
     ],
+    // "launch_handler": {
+    //     "client_mode": "navigate-existing"
+    // },
     "launch_handler": {
-        "client_mode": "navigate-existing"
+        "client_mode": "focus-existing"
     }
 }
 

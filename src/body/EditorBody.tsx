@@ -7,7 +7,7 @@ import { createLineNumbers, wrapLines } from "./utils.ts";
 export default function EditorBody() {
   const sourceCode = code.value;
   const highlightedCode = hljs.highlight(sourceCode, {
-    language: getFileExtension(xurl.pathname) ?? "text",
+    language: getFileExtension(xurl.pathname) ?? "json",
   }).value;
 
   let codeMask = sourceCode;
