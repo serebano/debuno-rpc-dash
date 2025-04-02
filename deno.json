@@ -1,13 +1,15 @@
 {
   "name": "@debuno/rpc-dash",
-  "version": "0.0.2",
+  "version": "0.5.1",
+  "displayName": "DebunoRPC",
+  "description": "Debuno RPC Dashboard",
   "exports": {
     ".": "./src/mod.ts"
   },
   "tasks": {
     "manifest": "deno run -A manifest.ts",
-    "dev": "deno task manifest && deno run -A --node-modules-dir npm:vite",
-    "build": "deno task manifest && deno run -A --node-modules-dir npm:vite build",
+    "dev": "RPC_ENV=dev deno run -A --node-modules-dir npm:vite",
+    "build": "RPC_ENV=prod deno run -A --node-modules-dir npm:vite build",
     "preview": "deno run -A --node-modules-dir npm:vite preview",
     "serve": "deno task build && deno run -A serve.ts"
   },

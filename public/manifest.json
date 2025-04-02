@@ -1,7 +1,7 @@
 {
-    "name": "RPC Dash 43",
-    "short_name": "RPC Dash",
-    "description": "Debuno RPC Dashboard 43",
+    "name": "DebunoRPC [DEV]",
+    "short_name": "DebunoRPC",
+    "description": "Debuno RPC Dashboard",
     "start_url": "/",
     "id": "/",
     "display": "standalone",
@@ -17,7 +17,7 @@
     ],
     "protocol_handlers": [
         {
-            "protocol": "web+rpc",
+            "protocol": "web+rpcdev",
             "url": "/#%s"
         }
     ],

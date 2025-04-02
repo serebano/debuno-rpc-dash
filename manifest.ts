@@ -1,10 +1,14 @@
-import config from "./src/config.ts";
 import { writeFile } from "node:fs/promises";
+import pkg from './deno.json' with {type: 'json'}
+import process from "node:process";
+// @ts-ignore .
+const ENV = process.env.RPC_ENV || 'prod'
+const DEV = ENV === 'dev'
 
 const manifest = {
-    "name": config.name + ` ${config.version}`,
-    "short_name": config.name,
-    "description": config.description + ` ${config.version}`,
+    "name": `${pkg.displayName}${DEV ? ' [DEV]' : ''}`,
+    "short_name": pkg.displayName,
+    "description": pkg.description,
     "start_url": "/",
     "id": "/",
     "display": "standalone",
@@ -20,13 +24,10 @@ const manifest = {
     ],
     "protocol_handlers": [
         {
-            "protocol": config.protocolHandler.protocol,
-            "url": config.protocolHandler.url
+            "protocol": DEV ? 'web+rpcdev' : 'web+rpc',
+            "url": '/#%s'
         }
     ],
-    // "launch_handler": {
-    //     "client_mode": "navigate-existing"
-    // },
     "launch_handler": {
         "client_mode": "focus-existing"
     }

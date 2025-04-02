@@ -115,7 +115,7 @@ export function createEventSourceInstance(endpoint: string): EventSource {
         // removeOrigin(origin)
     })
 
-    es.addEventListener('origins', e => {
+    es.addEventListener('endpoints', e => {
         const data = JSON.parse(e.data) as ({ file: string, http: string, base: string }[])
         setOrigins(data.map(v => v.http + v.base))
     })

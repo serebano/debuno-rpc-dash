@@ -1,0 +1,41 @@
+.addrbar2 {
+  position: sticky;
+  top: 0px;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  font-weight: normal;
+  color: rgba(255, 255, 255, 0.6);
+  background: #21252b;
+  font-size: 14px;
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  width: 100vw;
+  padding: 12px 0;
+}
+.addrbar2 form {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: calc(100vw - 40px);
+  margin-left: 20px;
+}
+.addrbar2 input {
+  background: rgba(0, 0, 0, 0.2);
+  color: rgba(255, 255, 255, 0.6);
+  width: 100%;
+  font-size: 14px;
+  padding: 8px 10px 8px 42px;
+  border-radius: 30px;
+  border: 2px solid transparent;
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+}
+.addrbar2 input:focus {
+  outline: 2px solid #2196f3;
+}
+.addrbar2 svg {
+  margin-right: -44px;
+}
+
+#addrbar2 i {
+  margin-left: 12px;
+}

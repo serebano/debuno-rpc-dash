@@ -1,4 +1,4 @@
-export default function Icon(init?: {
+export interface IconProps {
   padding?: number;
   fill?: string;
   strokeWidth?: number;
@@ -8,7 +8,13 @@ export default function Icon(init?: {
   size?: number;
   bgColor?: string;
   bgPadding?: number;
-}) {
+  radius?: number;
+  shape?: "circle" | "square" | "none";
+  shapeFill?: string;
+  shapeStroke?: string;
+  shapeStrokeWith?: number;
+}
+export default function Icon(init?: IconProps) {
   init = init || {};
   init.fill = init.fill || "rgba(0 0 0 / 50%)";
   init.size = init.size || 512;
@@ -19,6 +25,11 @@ export default function Icon(init?: {
   init.bgColor = init.bgColor || "rgba(32 34 39 / 100%)";
   init.stroke = init.stroke || init.bgColor;
   init.bgPadding = init.bgPadding || 0;
+  init.radius = init.radius || 72;
+  init.shape = init.shape || "none";
+  init.shapeFill = init.shapeFill || "none";
+  init.shapeStroke = init.shapeStroke || "none";
+  init.shapeStrokeWith = init.shapeStrokeWith || 0;
 
   const a = (p: number) => (490 * p / 100);
   const b = (p: number) => (a(p) * 2) + 490;
@@ -27,10 +38,34 @@ export default function Icon(init?: {
 
   const viewBox = [_a, _a, _b, _b].join(" ");
 
-  const t = (p: number) => (245 * p / 100);
-
-  const translate = t(init.bgPadding);
-  const scale = 1 - (init.bgPadding / 100);
+  const Shape = () => {
+    switch (init.shape) {
+      case "circle":
+        return (
+          <circle
+            fill={init.shapeFill}
+            stroke-width={init.shapeStrokeWith}
+            stroke={init.shapeStroke}
+            cx="245"
+            cy="245"
+            r={245 - init.shapeStrokeWith}
+          />
+        );
+      case "square":
+        return (
+          <rect
+            x="0"
+            y="0"
+            width="490"
+            height="490"
+            fill={init.shapeFill}
+            stroke-width={init.shapeStrokeWith}
+            stroke={init.shapeStroke}
+          />
+        );
+      default:
+    }
+  };
 
   return (
     <svg
@@ -47,28 +82,11 @@ export default function Icon(init?: {
       xmlnsXlink="http://www.w3.org/1999/xlink"
       xmlSpace="preserve"
     >
-      <g
-        id="debuno-bg"
-        stroke-width="0"
-        transform={`translate(${translate},${translate}), scale(${scale})`}
-      >
-        <rect
-          x={_a}
-          y={_a}
-          width={_b}
-          height={_b}
-          rx={_b / 2}
-          fill={init.bgColor}
-          strokeWidth="0"
-        >
-        </rect>
-      </g>
-      <g id="debuno-dots">
-        <g>
-          <circle cx="245" cy="102" r="102" />
-          <circle cx="365" cy="323" r="102" />
-          <circle cx="125" cy="323" r="102" />
-        </g>
+      <Shape />
+      <g>
+        <circle fill={init.fill} cx="245" cy="127" r={init.radius} />
+        <circle fill={init.fill} cx="145" cy="300" r={init.radius} />
+        <circle fill={init.fill} cx="345" cy="300" r={init.radius} />
       </g>
     </svg>
   );

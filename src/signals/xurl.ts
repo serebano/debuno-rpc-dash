@@ -29,6 +29,8 @@ export const xurl = new XURL(location, {
         xurl.status = 'LOADING'
         addr.host.value = xurl.host
 
+        localStorage.setItem('lasturl', xurl.href)
+
         utils.fetchCode(value)
             .then(res => {
 

@@ -1,10 +1,11 @@
 // @ts-ignore .
-const CACHE_NAME = 'v' + DASH_VERSION;
+const CACHE_NAME = DASH_VERSION;
 
 const urlsToCache = [
     "/",
     "/index.html",
     "/debuno.svg",
+    "/codicon.ttf",
     "/main.js",
     "/main.css",
     "/manifest.json"

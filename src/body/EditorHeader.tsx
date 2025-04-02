@@ -1,5 +1,6 @@
 import { addr, xurl } from "@signals";
 import CodIcon from "../codicon/CodIcon.tsx";
+import { AddrBar } from "../AddrBar.tsx";
 
 export function EditorHeader1() {
   return (
@@ -17,6 +18,10 @@ export function EditorHeader1() {
 }
 
 export default function EditorHeader() {
+  return <></>;
+}
+
+export function EditorHeader2() {
   return (
     <div class="header">
       <a

@@ -3,7 +3,7 @@ import {
     serveFile,
 } from 'jsr:@std/http@1/file-server';
 
-const PORT = Number(Deno.env.get('PORT')) || 3000;
+const PORT = Number(Deno.env.get('PORT')) || 18163; // rpc => 18 16 3
 
 async function handler(req: Request): Promise<Response> {
     // Serve static files from the ./dist directory

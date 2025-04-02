@@ -9,7 +9,7 @@ export default function Nav() {
 
   return (
     <div id="nav">
-      <NavHeader />
+      {/* <NavHeader /> */}
       <TreeView
         node={mapping}
         parentName="http:/"
