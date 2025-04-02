@@ -1,6 +1,6 @@
 import { addr, xurl } from "@signals";
 import CodIcon from "../codicon/CodIcon.tsx";
-import { AddrBar } from "../index/AddrBar.tsx";
+import { IndexAddrBar } from "../index/AddrBar.tsx";
 
 export function EditorHeader1() {
   return (

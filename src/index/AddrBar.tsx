@@ -3,11 +3,9 @@ import CodIcon from "../codicon/CodIcon.tsx";
 import Icon, { type IconProps } from "../icons/icon.tsx";
 import xurl from "@signals/xurl.ts";
 
-export function AddrBar() {
+export function IndexAddrBar() {
   const [endpoint, setEndpoint] = useState(
-    new URL(
-      localStorage.getItem("lasturl") || localStorage.getItem("origin") || "",
-    ).href,
+    localStorage.getItem("lasturl") || localStorage.getItem("origin") || "",
   );
   const iconProps: IconProps = {
     size: 32,
@@ -22,13 +20,18 @@ export function AddrBar() {
       <form
         onSubmit={(e) => {
           e.preventDefault();
-          xurl.goto(endpoint);
+          xurl.goto(
+            endpoint.startsWith("/") || endpoint.startsWith("http")
+              ? endpoint
+              : "/" + endpoint,
+          );
         }}
       >
         <Icon {...iconProps} />
         <input
           type="text"
           value={endpoint}
+          placeholder="localhost:8000"
           onInput={(e) => setEndpoint(e.currentTarget.value)}
         />
         <button
