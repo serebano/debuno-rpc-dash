@@ -1,12 +1,12 @@
 #welcome {
   display: flex;
   height: 100vh;
-  width: 100wh;
+  width: 100vw;
   position: relative;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: 20px;
+  gap: 50px;
   margin: 0;
   font-size: 14px;
   font-family: -apple-system, BlinkMacSystemFont, sans-serif;
@@ -27,50 +27,26 @@
   list-style-type: none;
 }
 
-#welcome form {
+#welcome .index-addrbar form {
   display: flex;
   align-items: center;
+  gap: 16px;
 }
-#welcome input {
+#welcome .index-addrbar input {
   background: rgba(0, 0, 0, 0.2);
   color: rgba(255, 255, 255, 0.6);
   min-width: 300px;
   font-size: 16px;
-  padding: 12px 16px 12px 62px;
+  padding: 12px 16px 12px 50px;
   border-radius: 30px;
   border: 3px solid transparent;
   font-family: -apple-system, BlinkMacSystemFont, sans-serif;
 }
-#welcome input:focus {
+#welcome .index-addrbar input:focus {
   outline: 2px solid #2196f3;
 }
-#welcome svg {
-  margin-right: -48px;
-}
-
-#welcome i {
-  margin-left: 12px;
-}
-
-.addrbar form {
-  display: flex;
-  align-items: center;
-}
-.addrbar input {
-  background: rgba(0, 0, 0, 0.2);
-  color: rgba(255, 255, 255, 0.6);
-  min-width: 300px;
-  font-size: 16px;
-  padding: 12px 16px 12px 62px;
-  border-radius: 30px;
-  border: 3px solid transparent;
-  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-}
-.addrbar input:focus {
-  outline: 2px solid #2196f3;
-}
-.addrbar svg {
-  margin-right: -48px;
+#welcome .index-addrbar svg {
+  margin-right: -58px;
 }
 
 #addrbar i {

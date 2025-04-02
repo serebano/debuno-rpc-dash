@@ -266,15 +266,7 @@ export class XURL {
     set path(value: string) {
         if (typeof value === 'undefined') return
         const path = (value.startsWith('/') ? value : `/${value}`).replace('//', '/');
-        let o = ''
-        try {
-
-            o = new URL(path, this.origin)
-        } catch (e) {
-            console.log('pathhhh', { path, o: this.origin })
-
-        }
-        const { url, line, column } = parseLocation(o)
+        const { url, line, column } = parseLocation(new URL(path, this.origin))
 
         batch(() => {
             this.#signals.pathname.value = url.pathname

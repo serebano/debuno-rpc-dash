@@ -48,7 +48,7 @@ export default function Icon(init?: IconProps) {
             stroke={init.shapeStroke}
             cx="245"
             cy="245"
-            r={245 - init.shapeStrokeWith}
+            r={245 - (init.shapeStrokeWith || 0)}
           />
         );
       case "square":

@@ -1,0 +1,46 @@
+.addrbar {
+  position: absolute;
+  top: 0px;
+  z-index: 10;
+  height: 56px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  font-weight: normal;
+  color: rgba(255, 255, 255, 0.6);
+  background: #21252b;
+  font-size: 14px;
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+}
+.addrbar form {
+  display: flex;
+  align-items: center;
+  justify-content: start;
+  gap: 16px;
+  flex: 1;
+  margin: 8px 16px;
+  /* width: 100%; */
+  /* width: calc(100vw - 40px); */
+  /* margin-left: 20px; */
+}
+.addrbar input {
+  background: rgba(0, 0, 0, 0.2);
+  color: rgba(255, 255, 255, 0.6);
+  display: block;
+  flex: 1;
+  font-size: 14px;
+  padding: 10px 16px 10px 16px;
+  border-radius: 8px;
+  border: 0px solid transparent;
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+}
+.addrbar input:focus {
+  outline: 2px solid #2196f3;
+}
+.addrbar svg {
+  /* margin-right: -68px; */
+}
+
+.addrbar i:hover {
+  color: rgba(255, 255, 255, 0.8);
+}

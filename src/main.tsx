@@ -1,18 +1,18 @@
 import { render } from "preact";
 import "./sw-register.ts";
 import { App } from "./app.tsx";
-import { Welcome } from "./welcome.tsx";
+import { Index } from "./index/Index.tsx";
+import { About } from "./about.tsx";
 import * as signals from "@signals";
 import * as actions from "@actions";
 import * as utils from "@utils";
-import { About } from "./about.tsx";
 
 Object.assign(globalThis, { utils, signals, actions });
 
 function Main() {
   switch (signals.xurl.host) {
     case "index":
-      return <Welcome />;
+      return <Index />;
     case "about":
       return <About />;
     default:

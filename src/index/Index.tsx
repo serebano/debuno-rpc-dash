@@ -1,8 +1,8 @@
-import "./welcome.css";
+import "./style.css";
 import config from "@config";
 import { AddrBar } from "./AddrBar.tsx";
 
-export function Welcome() {
+export function Index() {
   return (
     <div id="welcome">
       <AddrBar />

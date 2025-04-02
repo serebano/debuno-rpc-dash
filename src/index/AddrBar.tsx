@@ -1,6 +1,6 @@
 import { useState } from "preact/hooks";
-import CodIcon from "./codicon/CodIcon.tsx";
-import Icon, { type IconProps } from "./icons/icon.tsx";
+import CodIcon from "../codicon/CodIcon.tsx";
+import Icon, { type IconProps } from "../icons/icon.tsx";
 import xurl from "@signals/xurl.ts";
 
 export function AddrBar() {
@@ -10,15 +10,15 @@ export function AddrBar() {
     ).href,
   );
   const iconProps: IconProps = {
-    size: 36,
+    size: 32,
     shape: "circle",
-    shapeFill: "#282c34",
+    shapeFill: "rgba(0,0,0,0)",
     shapeStrokeWith: 0,
     fill: "rgba(255,255,255,0.5)",
   };
 
   return (
-    <div class="addrbar">
+    <div class="index-addrbar">
       <form
         onSubmit={(e) => {
           e.preventDefault();

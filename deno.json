@@ -1,6 +1,6 @@
 {
   "name": "@debuno/rpc-dash",
-  "version": "0.5.1",
+  "version": "0.5.2",
   "displayName": "DebunoRPC",
   "description": "Debuno RPC Dashboard",
   "exports": {

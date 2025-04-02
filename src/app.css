@@ -12,6 +12,11 @@ body {
   letter-spacing: 0px;
   user-select: none;
   tab-size: 4;
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  overflow: hidden;
 }
 a {
   color: inherit;
@@ -22,8 +27,9 @@ a:hover {
 }
 #app {
   display: flex;
-  height: 100vh;
+  height: calc(100vh - 56px);
   width: 100vw;
+  top: 56px;
   position: relative;
 }
 #nav {
@@ -36,7 +42,7 @@ a:hover {
   background: #282c34;
   position: relative;
   width: calc(100vw - 250px);
-  height: 100vh;
+  overflow: auto;
 }
 
 .centered {

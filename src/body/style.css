@@ -69,7 +69,7 @@ code,
 .main {
   color: #abb2bf;
   background: #282c34;
-  height: 100vh;
+  /* height: 100vh; */
   overflow: auto;
   position: relative;
 }
