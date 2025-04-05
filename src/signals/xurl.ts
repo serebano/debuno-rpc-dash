@@ -34,7 +34,6 @@ export const xurl = new XURL(location, {
         utils.fetchCode(value)
             .then(res => {
 
-
                 xurl.status = res.error ? 'ERROR' : 'OK'
 
                 if (res.endpoint) {

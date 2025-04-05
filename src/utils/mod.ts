@@ -99,7 +99,8 @@ export async function fetchCode(url: string | URL): Promise<{
 }> {
     const request = new Request(url, {
         headers: {
-            'x-dest': 'document'
+            'x-dest': 'document',
+            'x-client': 'debuno-rpc-dash/' + config.version
         }
     });
 
@@ -113,6 +114,18 @@ export async function fetchCode(url: string | URL): Promise<{
         return Promise.reject({
             error: await response.text(),
             code: `/**\n\n\n\t\tError: ${(response.status)}\n\n\t\t${request.url}\n\t\tfile://${filePath}\n\n\t\t${new Date()}\n\n*/`
+        })
+    }
+
+    if (!endpoint) {
+        const error = {
+            url: url.toString(),
+            error: `Endpoint offline`,
+            message: `Fetch failed: ${url}`
+        }
+        return Promise.reject({
+            error,
+            code: JSON.stringify({ error }, null, 4)
         })
     }
 
