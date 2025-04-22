@@ -1,3 +1,5 @@
+import { connect } from "@connect";
+
 registerServiceWorker();
 
 export function registerServiceWorker() {
@@ -35,15 +37,21 @@ export function registerServiceWorker() {
     if ("launchQueue" in window) {
         console.log(`          [launchQueue] setConsumer `)
         // @ts-ignore .
-        window.launchQueue.setConsumer(launchParams => {
+        window.launchQueue.setConsumer(async launchParams => {
             console.log(`launchParams`, launchParams)
 
             if (launchParams.targetURL) {
                 const url = new URL(launchParams.targetURL);
                 const uri = decodeURIComponent(url.hash.slice(1))
                 if (uri) {
-                    console.log(`   [launchQueue] ${uri}`);
-                    location.hash = uri
+                    const endpoints = connect.history.peek()
+                    for (const endpoint of endpoints) {
+                        await connect(endpoint).ready
+                    }
+
+                    const u = connect.parse(uri.split('://').pop()!)
+                    console.log(`   [launchQueue] ${u}`);
+                    location.hash = u
                 }
             }
         });

@@ -5,7 +5,7 @@ import xurl from "@signals/xurl.ts";
 
 export function IndexAddrBar() {
   const [endpoint, setEndpoint] = useState(
-    localStorage.getItem("lasturl") || localStorage.getItem("origin") || "",
+    localStorage.getItem("rpc:url") || localStorage.getItem("origin") || "",
   );
   const iconProps: IconProps = {
     size: 32,
@@ -20,11 +20,12 @@ export function IndexAddrBar() {
       <form
         onSubmit={(e) => {
           e.preventDefault();
-          xurl.goto(
-            endpoint.startsWith("/") || endpoint.startsWith("http")
-              ? endpoint
-              : "/" + endpoint,
-          );
+          location.hash = endpoint;
+          // xurl.goto(
+          //   endpoint.startsWith("/") || endpoint.startsWith("http")
+          //     ? endpoint
+          //     : "/" + endpoint,
+          // );
         }}
       >
         <Icon {...iconProps} />

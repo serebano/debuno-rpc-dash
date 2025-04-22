@@ -1,6 +1,7 @@
 import type { XURL } from "@xurl";
 import { xurl } from "@signals";
 import config from "@config";
+import { connect } from "@connect";
 
 export function getFileExtension(filename: string): string | null {
     const match = filename.match(/\.([a-zA-Z0-9.]+)$/);
@@ -86,7 +87,8 @@ export function getSubUrl(url: string | URL | Location): URL {
             return new URL(`${protocol}//error`);
         }
     } else {
-        return new URL(`${protocol}//index` + url.search + url.hash);
+        return new URL(url)
+        // return new URL(`${protocol}//index` + url.search + url.hash);
     }
 }
 
@@ -170,9 +172,9 @@ export function replaceImportAndExportPathsWithLinks(
 
 export function linkImports(sourceCode: string, urls: string[]): string {
     // console.log('linkImports/modules', modules)
-    const loc = xurl
-
-    const importLink = (specifier: string, url: string) => `&alt;a&asp;class="mod-path&asp;link"&asp;title="Open ${specifier} [Cmd + Click]"&asp;onclick="goto('${url}'); return false;"&agt;${specifier}&alt;/a&agt;`
+    const loc = new URL(connect.url.peek())
+    console.log('linkImports', loc)
+    const importLink = (specifier: string, url: string) => `&alt;a&asp;class="mod-path&asp;link"&asp;title="Open ${specifier} [Cmd + Click]"&asp;onclick="location.hash='${url}'; return false;"&agt;${specifier}&alt;/a&agt;`
     const importLinkExternal = (specifier: string, url: string) => `&alt;a&asp;class="mod-path&asp;link"&asp;title="Open ${specifier}"&asp;onclick="window.open('${url}', 'ext'); return false;"&agt;${specifier}&alt;/a&agt;`
 
     return replaceImportAndExportPathsWithLinks(sourceCode, (importPath: string) => {

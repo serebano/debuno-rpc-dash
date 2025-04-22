@@ -2,7 +2,7 @@
 import "./style.css";
 import CodIcon from "../codicon/CodIcon.tsx";
 import xurl from "@signals/xurl.ts";
-import X from "https://esm.sh/highlight.js@11.11.1/lib/languages/typescript";
+import { connect } from "@connect";
 
 export function AddrBar() {
   return (
@@ -12,13 +12,14 @@ export function AddrBar() {
           e.preventDefault();
           // @ts-ignore ...
           const value = e.currentTarget[0].value;
+          location.hash = value;
           // @ts-ignore .
           e.currentTarget[0].blur();
-          xurl.goto(
-            value.startsWith("/") || value.startsWith("http")
-              ? value
-              : "/" + value,
-          );
+          // xurl.goto(
+          //   value.startsWith("/") || value.startsWith("http")
+          //     ? value
+          //     : "/" + value,
+          // );
         }}
       >
         {/* <Icon {...iconProps} /> */}
@@ -30,7 +31,7 @@ export function AddrBar() {
             margin: "0",
             color: "inherit",
           }}
-          onClick={() => xurl.back()}
+          onClick={() => history.back()}
         >
           <CodIcon name="arrow-left" size={18} />
         </a>
@@ -43,14 +44,22 @@ export function AddrBar() {
             margin: "0",
             color: "inherit",
           }}
-          onClick={() => xurl.forward()}
+          onClick={() => history.forward()}
         >
           <CodIcon name="arrow-right" size={18} />
         </a>
 
         <input
           type="text"
-          value={xurl.host + xurl.path}
+          value={connect.url.value.split("://").pop()}
+          onFocus={(e) => {
+            e.preventDefault();
+            e.currentTarget.value = connect.url.value;
+          }}
+          onBlur={(e) => {
+            e.preventDefault();
+            e.currentTarget.value = connect.url.value.split("://").pop()!;
+          }}
           // onInput={(e) => setEndpoint(e.currentTarget.value)}
         />
 

@@ -6,12 +6,13 @@ import { About } from "./about.tsx";
 import * as signals from "@signals";
 import * as actions from "@actions";
 import * as utils from "@utils";
+import { connect } from "@connect";
 
 Object.assign(globalThis, { utils, signals, actions });
 
 function Main() {
-  switch (signals.xurl.host) {
-    case "index":
+  switch (connect.url.value) {
+    case "":
       return <Index />;
     case "about":
       return <About />;
@@ -20,4 +21,27 @@ function Main() {
   }
 }
 
+connect.on("*", (e) => {
+  console.debug(
+    `%c${e.target.endpoint.replace("://", ":")}%c on(%c${e.type}%c)`,
+    `color:#ccc;background:#3c3c3c;border-radius:50px;font-size:11px;padding:2.5px 7px;font-family:-apple-system, BlinkMacSystemFont, sans-serif;`,
+    `color:ccc;`,
+    `color:#fe8d59;`,
+    `color:ccc`,
+    e.data ?? "",
+  );
+});
+
+connect.init();
+if (import.meta.hot) {
+  await connect.restore();
+}
+
 render(<Main />, document.body);
+
+if (import.meta.hot) {
+  import.meta.hot.dispose(() => {
+    connect.close();
+    connect.dispose();
+  });
+}

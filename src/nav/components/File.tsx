@@ -1,13 +1,14 @@
 import { fileTypeClass } from "../utils.ts";
 import type { FileProps } from "../types.ts";
-import { xurl } from "@signals";
+// import { xurl } from "@signals";
 
 export function File({ name, url, currentUrl }: FileProps) {
   const isSelected = currentUrl?.startsWith(url);
 
   const onClick = (e: Event) => {
     e.preventDefault();
-    xurl.goto(url);
+    location.hash = url;
+    // xurl.goto(url);
   };
 
   return (
