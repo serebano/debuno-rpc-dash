@@ -88,7 +88,7 @@ function getHeadersSync(url: string): Headers | null {
 //     return (`${protocol}://${hostname}:${port}${path}`);
 // }
 
-function parseUrlLike(input: string | number): string {
+function parseUrlLike(input: string | number | URL): string {
     const str = String(input).trim();
     // console.log("INPUT:", str);
 

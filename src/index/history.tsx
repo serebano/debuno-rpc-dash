@@ -29,7 +29,7 @@ function History() {
       </ul>
       <button
         type="button"
-        onClick={() => connect.restore()}
+        onClick={() => connect.restore(true)}
       >
         Restore
       </button>

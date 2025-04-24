@@ -1,7 +1,7 @@
 import { useState } from "preact/hooks";
 import CodIcon from "../codicon/CodIcon.tsx";
 import Icon, { type IconProps } from "../icons/icon.tsx";
-import xurl from "@signals/xurl.ts";
+import { connect } from "@connect";
 
 export function IndexAddrBar() {
   const [endpoint, setEndpoint] = useState(
@@ -21,11 +21,7 @@ export function IndexAddrBar() {
         onSubmit={(e) => {
           e.preventDefault();
           location.hash = endpoint;
-          // xurl.goto(
-          //   endpoint.startsWith("/") || endpoint.startsWith("http")
-          //     ? endpoint
-          //     : "/" + endpoint,
-          // );
+          connect.restore();
         }}
       >
         <Icon {...iconProps} />
@@ -33,6 +29,11 @@ export function IndexAddrBar() {
           type="text"
           value={endpoint}
           placeholder="localhost:8000"
+          autofocus
+          onFocus={(e) => {
+            e.preventDefault();
+            e.currentTarget.select();
+          }}
           onInput={(e) => setEndpoint(e.currentTarget.value)}
         />
         <button

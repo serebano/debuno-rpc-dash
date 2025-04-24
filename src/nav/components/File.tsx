@@ -8,7 +8,6 @@ export function File({ name, url, currentUrl }: FileProps) {
   const onClick = (e: Event) => {
     e.preventDefault();
     location.hash = url;
-    // xurl.goto(url);
   };
 
   return (

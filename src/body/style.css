@@ -72,6 +72,7 @@ code,
   /* height: 100vh; */
   overflow: auto;
   position: relative;
+  flex: 1;
 }
 
 .code-mask {

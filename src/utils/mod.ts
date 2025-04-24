@@ -2,6 +2,7 @@ import type { XURL } from "@xurl";
 import { xurl } from "@signals";
 import config from "@config";
 import { connect } from "@connect";
+import type { RPCFile } from "../connect/RPCFile.ts";
 
 export function getFileExtension(filename: string): string | null {
     const match = filename.match(/\.([a-zA-Z0-9.]+)$/);
@@ -172,24 +173,53 @@ export function replaceImportAndExportPathsWithLinks(
 
 export function linkImports(sourceCode: string, urls: string[]): string {
     // console.log('linkImports/modules', modules)
-    const loc = new URL(connect.url.peek())
-    console.log('linkImports', loc)
-    const importLink = (specifier: string, url: string) => `&alt;a&asp;class="mod-path&asp;link"&asp;title="Open ${specifier} [Cmd + Click]"&asp;onclick="location.hash='${url}'; return false;"&agt;${specifier}&alt;/a&agt;`
-    const importLinkExternal = (specifier: string, url: string) => `&alt;a&asp;class="mod-path&asp;link"&asp;title="Open ${specifier}"&asp;onclick="window.open('${url}', 'ext'); return false;"&agt;${specifier}&alt;/a&agt;`
+    const loc = new URL(connect.file.peek()?.http!)
+    const importMap = connect.file.peek()?.importMap?.()
+    // console.log('linkImports', loc)
+    const importLink = (specifier: string, url: string) => `&alt;a&asp;class="mod-path&asp;link"&asp;title="Open ${url}"&asp;onclick="location.hash='${url}'; return false;"&agt;${specifier}&alt;/a&agt;`
+    const importLinkExternal = (specifier: string, url: string) => `&alt;a&asp;class="mod-path&asp;link"&asp;title="Open External ${url}"&asp;onclick="window.open('${url}', 'ext'); return false;"&agt;${specifier}&alt;/a&agt;`
 
-    return replaceImportAndExportPathsWithLinks(sourceCode, (importPath: string) => {
-
-        const entry = urls.find(module => {
+    function findEntry(importPath: string) {
+        return urls.find(module => {
             const importUrl = new URL(importPath, loc.origin)
             return module === importUrl.origin + importUrl.pathname
         })
+    }
+    return replaceImportAndExportPathsWithLinks(sourceCode, (importPath: string) => {
+
+        const entry = findEntry(importPath)
+
 
         if (entry)
             return importLink(importPath, new URL(entry, loc.origin).href);
 
+        if (importMap) {
+            const keys = Object.keys(importMap)
+            const exactKey = keys.find(key => importPath === key)
+            if (exactKey) {
+                const value = importMap[exactKey]
+                if (value.startsWith('.'))
+                    return importLink(importPath, new URL(value, loc.origin).href)
+                const entry = findEntry(value)
+                return entry
+                    ? importLink(importPath, value)
+                    : importLinkExternal(importPath, value)
+            }
+            const pathKey = keys.find(key => key.endsWith('/') && importPath.startsWith(key))
+            if (pathKey) {
+                const value = importMap[pathKey] + importPath.slice(pathKey.length)
+                if (value.startsWith('.'))
+                    return importLink(importPath, new URL(value, loc.origin).href)
+                const entry = findEntry(value)
+                return entry
+                    ? importLink(importPath, value)
+                    : importLinkExternal(importPath, value)
+            }
+        }
+        const u = new URL(importPath, loc.href)
         return importPath.startsWith('.') || importPath.startsWith(loc.origin)
-            ? importLink(importPath, new URL(importPath, loc.href).href)
-            : importLinkExternal(importPath, new URL(importPath, loc.href).href);
+            ? importLink(importPath, u.origin + u.pathname)
+            : importLinkExternal(importPath, u.origin + u.pathname);
     });
 }
 

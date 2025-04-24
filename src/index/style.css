@@ -43,7 +43,11 @@
   font-family: -apple-system, BlinkMacSystemFont, sans-serif;
 }
 #welcome .index-addrbar input:focus {
-  outline: 2px solid #2196f3;
+  outline: 2px solid rgb(101 157 247);
+}
+#welcome .index-addrbar input::selection {
+  background: rgb(63 99 139); /* background color of selected text */
+  color: white; /* color of selected text */
 }
 #welcome .index-addrbar svg {
   margin-right: -58px;

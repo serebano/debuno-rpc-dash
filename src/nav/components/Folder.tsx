@@ -1,12 +1,19 @@
 import { TreeView } from "./TreeView.tsx";
 import { getNestedPath, hasSelectedItem, shouldCombinePath } from "../utils.ts";
 import type { FolderProps } from "../types.ts";
-import { eventSourcesState } from "@signals/sse.ts";
 import DotIcon from "../../icons/DotIcon.tsx";
 import { details } from "../state.ts";
-import origins from "@signals/origins.ts";
+import { computed } from "@preact/signals";
+import { connect } from "@connect";
+// import origins from "@signals/origins.ts";
 
 // globalThis.details = details;
+
+const readyStates = computed(() => {
+  return Object.fromEntries(
+    connect.instances.value.map((i) => [i.endpoint, i.STATE[i.readyState]]),
+  );
+});
 
 export function Folder(
   { name, node, parentName, endpoint, currentUrl, depth = 0 }: FolderProps,
@@ -35,7 +42,7 @@ export function Folder(
       }}
     >
       <DotIcon
-        state={eventSourcesState.value![name]}
+        state={readyStates.value[name] as any}
         size={10}
       />
     </b>
@@ -43,8 +50,9 @@ export function Folder(
 
   if (depth > 0 && shouldCombinePath(node)) {
     const [displayPath, finalNode, fullPath] = getNestedPath(node, name);
-    const key = parentName + "/" + fullPath;
-    const isBase = origins.peek().includes(key + "/");
+    const key = parentName + fullPath;
+    // console.log(" key", key, node);
+    const isBase = depth === 0; // origins.peek().includes(key + "/");
     const d = details.peek();
 
     return (
@@ -62,11 +70,11 @@ export function Folder(
                 dangerouslySetInnerHTML={{ __html: displayPath }}
               />
             </div>
-            {isBase ? dot(key + "/") : ""}
+            {isBase ? dot(key) : ""}
           </summary>
           <TreeView
             node={finalNode}
-            parentName={parentName + "/" + fullPath}
+            parentName={parentName + fullPath}
             endpoint={endpoint}
             currentUrl={currentUrl}
             depth={depth + 1}
@@ -76,8 +84,8 @@ export function Folder(
     );
   }
 
-  const key = parentName + "/" + name;
-  const isBase = origins.peek().includes(key + "/");
+  const key = parentName + name;
+  const isBase = depth === 0; //origins.peek().includes(key + "/");
   const d = details.peek();
 
   return (
@@ -91,7 +99,7 @@ export function Folder(
           <div class="label-container">
             <span class="label" title={name}>{name}</span>
           </div>
-          {isBase ? dot(key + "/") : ""}
+          {isBase ? dot(key) : ""}
         </summary>
         <TreeView
           node={node}

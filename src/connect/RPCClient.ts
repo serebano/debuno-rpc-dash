@@ -1,8 +1,9 @@
 // deno-lint-ignore-file no-explicit-any
-import { RPCFiles, type RPCFile } from "./RPCFiles.ts";
+import { RPCFiles } from "./RPCFiles.ts";
+import type { RPCFile } from './RPCFile.ts'
 import { debounce, getHeadersSync, parseUrlLike } from "./utils.ts";
 
-type RPCInternalEventNames = 'open' | 'close' | 'error' | 'update' | 'state' | 'files' | 'file' | 'endpoints'
+type RPCInternalEventNames = 'open' | 'close' | 'error' | 'update' | 'state' | 'files' | 'file' | 'endpoints' | 'imports'
 
 type RPCFileEventNames =
 	'file:add' |
@@ -39,6 +40,7 @@ class RPCClient extends EventSource {
 		[EventSource.CLOSED]: "CLOSED",
 		[EventSource.CONNECTING]: "CONNECTING",
 	}
+	STATE = RPCClient.STATE
 	static instances = new Map<string, RPCClient>()
 	static files = new WeakMap<RPCClient, RPCFiles>()
 	static parse = parseUrlLike
@@ -90,6 +92,7 @@ class RPCClient extends EventSource {
 
 	files!: RPCFiles
 	file?: RPCFile
+	imports: Record<string, string> = {}
 	#ready = Promise.withResolvers<RPCClient>()
 	ready: Promise<RPCClient> = this.#ready.promise
 
@@ -134,13 +137,15 @@ class RPCClient extends EventSource {
 
 		const emitFiles = debounce(() => this.emit('files'), 100)
 
-		this.files = new RPCFiles([], {
+		this.files = new RPCFiles(this, {
 			onInit: () => this.emit('files'),
 			onSet: emitFiles,
 			onDelete: emitFiles,
 			onClear: emitFiles,
-			onFetch: emitFiles,
+			onFetch: (file) => this.emit('file:fetch', file)
 		})
+
+
 
 		this.#on('open', () => {
 			this.emit('open')
@@ -183,6 +188,9 @@ class RPCClient extends EventSource {
 				return;
 			}
 		});
+		this.#on('imports', e => {
+			this.imports = e.data
+		})
 		this.#on('files', e => {
 			const files = e.data
 			this.files.init(files)
@@ -210,7 +218,7 @@ class RPCClient extends EventSource {
 					this.emit('file:add', this.files.get(file.path)!)
 					break
 				case "changed":
-					this.files.set(file.path, file)
+					this.files.upsert(file.path, file)
 					this.emit('file:change', this.files.get(file.path)!)
 					break
 				case "removed":
@@ -297,6 +305,7 @@ class RPCClient extends EventSource {
 	#on(type: 'update', cb: RPCInternalEventListener): void
 	#on(type: 'file', cb: RPCInternalEventListener<RPCFile>): void
 	#on(type: 'files', cb: RPCInternalEventListener<RPCFile[]>): void
+	#on(type: 'imports', cb: RPCInternalEventListener<Record<string, string>>): void
 	#on(type: 'state', cb: RPCInternalEventListener<Record<string, any>>): void
 	#on(type: 'endpoints', cb: RPCInternalEventListener<string[]>): void
 
