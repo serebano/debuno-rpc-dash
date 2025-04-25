@@ -51,30 +51,21 @@ export function AddrBar() {
         }}
       >
         {/* <Icon {...iconProps} /> */}
-        <a
-          style={{
-            background: "transparent",
-            border: "none",
-            padding: "0",
-            margin: "0",
-            color: "inherit",
-          }}
-          onClick={() => history.back()}
-        >
-          <CodIcon name="arrow-left" size={iconSize} />
+        <a onClick={() => history.back()}>
+          <CodIcon name="arrow-left" size={iconSize + 2} />
         </a>
+        <a onClick={() => history.forward()}>
+          <CodIcon name="arrow-right" size={iconSize + 2} />
+        </a>
+
         <a
-          type="button"
-          style={{
-            background: "transparent",
-            border: "none",
-            padding: "0",
-            margin: "0",
-            color: "inherit",
+          style="margin-left:8px"
+          onClick={async () => {
+            connect(connect.url.value).close();
+            connect(connect.url.value);
           }}
-          onClick={() => history.forward()}
         >
-          <CodIcon name="arrow-right" size={iconSize} />
+          <CodIcon name="refresh" size={iconSize + 2} />
         </a>
 
         <input

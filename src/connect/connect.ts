@@ -150,7 +150,7 @@ connect.init = () => {
                     }
                 } catch (e: any) {
                     console.warn(`url => ${url} => connect fail`);
-                    file.value = { error: { message: e.message } } as any
+                    file.value = { error: { message: e.message || e } } as any
                 }
             } else {
                 console.warn(`url => ${url} => other`);

@@ -25,17 +25,19 @@
 }
 .addrbar input {
   background: rgba(0, 0, 0, 0.2);
-  color: rgba(255, 255, 255, 0.9);
+  color: rgba(255, 255, 255, 0.7);
   display: block;
   flex: 1;
-  font-size: 13px;
+  font-size: 14px;
   padding: 10px 16px 10px 16px;
   border-radius: 80px;
   border: 0px solid transparent;
-  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family: system-ui, sans-serif;
 }
 .addrbar input:focus {
-  outline: 1px solid rgb(101 157 247);
+  outline: 2px solid rgb(101 157 247);
+  background: #21252b;
+  color: rgba(255, 255, 255, 0.9);
 }
 .addrbar input::selection {
   background: rgb(63 99 139); /* background color of selected text */
@@ -46,6 +48,7 @@
 }
 .addrbar i {
   transition: all 0.3s ease;
+  font-weight: 600 !important;
 }
 .addrbar i:hover {
   color: rgba(255, 255, 255, 0.9);
