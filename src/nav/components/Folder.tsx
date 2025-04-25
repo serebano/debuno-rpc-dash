@@ -18,7 +18,8 @@ const readyStates = computed(() => {
 export function Folder(
   { name, node, parentName, endpoint, currentUrl, depth = 0 }: FolderProps,
 ) {
-  const isOpen = hasSelectedItem(node, endpoint, currentUrl, depth);
+  const isOpen = (depth === 0 && name === connect.instance.value?.endpoint) ||
+    hasSelectedItem(node, endpoint, currentUrl, depth);
 
   const onToggle = (e: any) => {
     const key = e.target.dataset.key;
@@ -48,7 +49,7 @@ export function Folder(
     </b>
   );
 
-  if (depth > 0 && shouldCombinePath(node)) {
+  if (shouldCombinePath(node)) {
     const [displayPath, finalNode, fullPath] = getNestedPath(node, name);
     const key = parentName + fullPath;
     // console.log(" key", key, node);
@@ -97,7 +98,9 @@ export function Folder(
       >
         <summary>
           <div class="label-container">
-            <span class="label" title={name}>{name}</span>
+            <span class="label" title={name}>
+              {isBase ? name.split("://").pop() : name}
+            </span>
           </div>
           {isBase ? dot(key) : ""}
         </summary>

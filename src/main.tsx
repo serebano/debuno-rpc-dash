@@ -33,13 +33,15 @@ connect.on("*", (e) => {
 });
 
 connect.init();
-if (import.meta.hot) {
-  await connect.restore();
-}
+// if (import.meta.hot) {
+//   await connect.restore();
+// }
 
 render(<Main />, document.body);
 
 if (import.meta.hot) {
+  await connect.restore();
+
   import.meta.hot.dispose(() => {
     connect.close();
     connect.dispose();

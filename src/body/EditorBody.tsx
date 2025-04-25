@@ -15,12 +15,12 @@ export default function EditorBody(
     "";
 
   if (!connect.file.value) {
-    return <div class="wrapper">No file selected</div>;
+    return <div style="padding:16px;font-size:16px">No file selected</div>;
   }
 
   if (connect.file.value.error) {
     return (
-      <div class="wrapper">
+      <div style="padding:16px;font-size:16px">
         <pre>{JSON.stringify(connect.file.value.error, null, 4)}</pre>
       </div>
     );

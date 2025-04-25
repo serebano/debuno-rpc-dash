@@ -11,6 +11,35 @@ function debounce<T extends (...args: any[]) => void>(
     };
 }
 
+function getLangFromExt(filename: string): string {
+    const map: Record<string, string> = {
+        'd.ts': 'typescript',
+        'tsx': 'typescript',
+        'ts': 'typescript',
+        'jsx': 'javascript',
+        'js': 'javascript',
+        'json': 'json',
+        'sh': 'shell',
+        'html': 'html',
+        'css': 'css',
+        'scss': 'scss',
+        'md': 'markdown',
+        'yaml': 'yaml',
+        'yml': 'yaml',
+        'xml': 'xml',
+        'sql': 'sql',
+    };
+
+    const parts = filename.toLowerCase().split('.').filter(Boolean);
+    // Check from most specific (e.g., d.ts) to least (e.g., ts)
+    for (let i = 1; i < parts.length; i++) {
+        const ext = parts.slice(i).join('.');
+        if (map[ext]) return map[ext];
+    }
+
+    return parts[parts.length - 1] // 'Unknown';
+}
+
 function getHeadersSync(url: string): Headers | null {
     try {
         const xhr = new XMLHttpRequest();
@@ -180,4 +209,4 @@ function ensureSlash(path: string): string {
         : path + "/";
 }
 
-export { parseUrlLike, getHeadersSync, debounce }
+export { parseUrlLike, getHeadersSync, debounce, getLangFromExt }

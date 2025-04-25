@@ -4,6 +4,7 @@ import { RPCClient, type RPCEvent, type RPCEventListener, type RPCEventNames } f
 import { RPCFile } from './RPCFile.ts'
 import { RPCFiles } from './RPCFiles.ts'
 import { debounce } from "./utils.ts";
+import config from "@config";
 
 connect.e = new EventTarget
 connect.eventNames = [] as string[]
@@ -40,7 +41,7 @@ const instances = signal<RPCClient[]>([...RPCClient.instances.values()])
 const files = computed(() => {
     let files: RPCFile[] = [];
     for (const instance of instances.value) {
-        files = [...files, ...connect.filesMap.get(instance)!.value];
+        files = [...files, ...connect.filesMap.get(instance)?.value || []];
     }
     return files
 })
@@ -56,18 +57,32 @@ connect.resolve = RPCClient.resolve
 connect.filesMap = new WeakMap<RPCClient, Signal<RPCFile[]>>()
 connect.history = signal<string[]>(JSON.parse(localStorage.getItem('endpoints') || '[]'))
 connect.url = signal(decodeURIComponent(location.hash.slice(1)))
+connect.open = () => Promise.all(connect.instances.value.map((instance) => connect(instance.endpoint).ready))
 connect.restore = async (goToLastUrl?: boolean) => {
     const endpoints = connect.history.peek()
     for (const endpoint of endpoints) {
         await connect(endpoint).ready
     }
+    const hashUrl = decodeURIComponent(location.hash.slice(1))
+
     if (goToLastUrl) {
-        const lastUrl = localStorage.getItem("rpc:url");
+        const lastUrl = localStorage.getItem("rpc:url")
         if (lastUrl) {
-            location.hash = lastUrl;
+            if (hashUrl === lastUrl)
+                await connect(lastUrl).ready
+            else
+                location.hash = lastUrl
         }
+    } else if (hashUrl) {
+        await connect(hashUrl).ready
     }
 }
+
+connect.instance = computed(() => {
+    const url = connect.url.value
+    if (url && url !== 'about')
+        return connect(connect.url.value)
+})
 
 
 connect.init = () => {
@@ -106,41 +121,42 @@ connect.init = () => {
         }
     });
 
-    // connect.on("file:add", (e) => location.hash = e.data.http);
-    // connect.on("file:change", (e) => location.hash = e.data.http);
-    // connect.on("file:select", (e) => location.hash = e.data.http);
-
-
-
     const onHashChange = () => {
         const currentUrl = decodeURIComponent(location.hash.slice(1))
-        if (connect.url.value !== currentUrl)
-            connect.url.value = currentUrl
+        if (currentUrl.startsWith(config.protocolHandler.protocol))
+            connect.url.value = (currentUrl.split('://').pop()!)
+        else
+            connect.url.value = (currentUrl)
     }
     addEventListener("hashchange", onHashChange);
     disposeFuncs.push(() => removeEventListener("hashchange", onHashChange))
 
-    disposeFuncs.push(connect.url.subscribe(url => {
-        const currentUrl = location.hash.slice(1)
-        if (url !== currentUrl) {
-            location.hash = url
-        }
-    }))
+    disposeFuncs.push(
+        connect.url.subscribe(async url => {
+            if (url && url !== 'about') {
+                try {
+                    const instance = await connect(url).ready
+                    localStorage.setItem("rpc:url", url);
+                    console.warn(`url => ${url} => connect ok`);
+                    if (!instance.filename) {
+                        file.value = undefined
+                    }
+                } catch (e: any) {
+                    console.warn(`url => ${url} => connect fail`);
+                    file.value = { error: { message: e.message } } as any
+                }
+            } else {
+                console.warn(`url => ${url} => other`);
+
+                // file.value = undefined;
+            }
+        }))
 
     disposeFuncs.push(
-        connect.url.subscribe((url) => {
-            console.warn(`url => ${url}`);
-            if (url) {
-                localStorage.setItem("rpc:url", url);
-                connect(url);
-            } else {
-                file.value = undefined;
-            }
-        }),
         instances.subscribe((instances) => {
-            if (!instances.length) {
-                location.hash = "";
-            }
+            // if (!instances.length) {
+            //     location.hash = "";
+            // }
         }),
     );
 
@@ -162,17 +178,21 @@ let currentLang: string | undefined
 connect.splitView = signal(false)
 
 function connect(input: number | string): RPCClient {
-    return new RPCClient(input, {
+    const instance = new RPCClient(input, {
         onCreated(instance) {
+            console.warn(`connect(${input})`)
+
             instance.on('*', (e) => {
                 connect.emit(e.type.replace('rpc:', '') as any, e)
                 connect.onAll?.(e)
             })
 
-            connect.filesMap.set(instance, signal([]))
-            connect.instances.value = [...RPCClient.instances.values()]
+            // connect.filesMap.set(instance, signal([]))
+            // connect.instances.value = [...RPCClient.instances.values()]
 
             instance.on('open', () => {
+                connect.filesMap.set(instance, signal([]))
+
                 connect.instances.value = [...RPCClient.instances.values()]
             })
 
@@ -181,13 +201,18 @@ function connect(input: number | string): RPCClient {
             })
 
             instance.on("close", (e) => {
-                connect.instances.value = [...RPCClient.instances.values()]
-                connect.filesMap.delete(instance)
+                if (e.data === 'INSTANCE_STOPPED') {
+                    RPCClient.instances.delete(instance.endpoint)
+                    connect.filesMap.delete(instance)
+                }
 
-                if (connect.file.value?.http?.startsWith(instance.url))
-                    connect.file.value = undefined
-                if (e.data)
+                connect.instances.value = [...RPCClient.instances.values()]
+                // connect.filesMap.delete(instance)
+
+                if (e.data && connect.file.value?.http?.startsWith(instance.url))
                     connect.file.value = { error: e.data } as any
+
+
             });
 
 
@@ -213,23 +238,34 @@ function connect(input: number | string): RPCClient {
                 if (currentLang && (e.data.http.endsWith('.js') || e.data.http.endsWith('.ts') || e.data.http.endsWith('.tsx') || e.data.http.endsWith('.jsx')))
                     e.data.lang = currentLang
                 connect.file.value = await e.data.fetch()
-                location.hash = e.data.http
             }
+            const selectFile: RPCEventListener<RPCFile> = (e) => {
+                const hashUrl = location.hash.slice(1)
+                if (hashUrl === e.data.http)
+                    fetchFile(e)
+                else
+                    location.hash = e.data.http
+            }
+
+
+            instance.on('file:add', selectFile)
+            instance.on('file:change', selectFile)
+            instance.on('file:select', fetchFile)
+
             instance.on('file:fetch', e => {
                 const file = e.data
                 if (file.lang === 'javascript' || file.lang === 'typescript')
                     currentLang = file.lang
             })
-            instance.on('file:add', fetchFile)
-            instance.on('file:change', fetchFile)
-            instance.on('file:select', fetchFile)
+
             instance.on('file:remove', (e) => {
                 const file = e.data
                 if (connect.file.value?.http === file.http) {
                     location.hash = file.endpoint;
-                    connect.file.value = undefined
+                    // connect.file.value = undefined
                 }
             })
+
             instance.on('file:error', e => {
                 connect.file.value = e.data
             })
@@ -237,6 +273,9 @@ function connect(input: number | string): RPCClient {
 
         }
     });
+    // if (!instance.filename)
+    //     connect.file.value = undefined
+    return instance
 }
 
 

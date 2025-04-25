@@ -2,10 +2,11 @@
 import "./style.css";
 import CodIcon from "../codicon/CodIcon.tsx";
 import { connect } from "@connect";
+import { getLangFromExt } from "@connect/utils.ts";
 
 function FileLang() {
-  return connect.file.value?.lang === "javascript" ||
-      connect.file.value?.lang === "typescript"
+  return connect.file.value?.http &&
+      getLangFromExt(connect.file.value?.http) === "typescript"
     ? (
       <a
         class="file-lang"

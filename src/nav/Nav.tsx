@@ -58,7 +58,7 @@ export default function Nav() {
       <TreeView
         node={mapping.value}
         parentName=""
-        currentUrl={connect.url.value}
+        currentUrl={connect.file.value?.http || ""}
         endpoint={connect.file.value?.endpoint!}
       />
     </div>

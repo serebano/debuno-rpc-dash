@@ -15,8 +15,8 @@ interface RPCFile {
     type: 'added' | 'removed' | 'changed' | 'selected'
     source?: string
     sources?: {
-        original: { path: string, contents: string },
-        generated?: { path: string, contents: string },
+        original: { path: string, lang: string, contents: string },
+        generated?: { path: string, lang: string, contents: string },
     },
     error?: any
 }

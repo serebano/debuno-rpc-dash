@@ -1,6 +1,6 @@
 {
   "name": "@debuno/rpc-dash",
-  "version": "0.5.6",
+  "version": "0.5.7",
   "displayName": "DebunoRPC",
   "description": "Debuno RPC Dashboard",
   "exports": {
@@ -49,6 +49,7 @@
     "@xurl": "./src/xurl.ts",
     "@xurl/": "./src/xurl/",
     "@config": "./src/config.ts",
-    "@connect": "./src/connect/connect.ts"
+    "@connect": "./src/connect/connect.ts",
+    "@connect/": "./src/connect/"
   }
 }

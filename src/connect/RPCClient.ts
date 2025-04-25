@@ -75,10 +75,8 @@ class RPCClient extends EventSource {
 			protocol: entries['x-protocol']
 		}
 	}
-	static close(endpoint?: string) {
-		endpoint
-			? RPCClient.instances.get(endpoint)?.close()
-			: RPCClient.instances.forEach((instance) => instance.close())
+	static close(reason?: string) {
+		RPCClient.instances.forEach((instance) => instance.close(reason))
 	}
 
 	#eventNames: string[] = [];
@@ -87,15 +85,19 @@ class RPCClient extends EventSource {
 	path!: string;
 	base!: string;
 	endpoint!: string;
-	filename!: string;
+	filename?: string;
 	runtime!: string;
 
 	files!: RPCFiles
-	file?: RPCFile
+	// file?: RPCFile
 	imports: Record<string, string> = {}
 	#ready = Promise.withResolvers<RPCClient>()
-	ready: Promise<RPCClient> = this.#ready.promise
-
+	get ready(): Promise<RPCClient> {
+		return this.#ready.promise
+	}
+	get file(): RPCFile | undefined {
+		return this.filename ? this.files.get(this.filename) : undefined
+	}
 	declare readyState: 0 | 1 | 2
 
 	constructor(url: number | string | URL, eventSourceInitDict?: EventSourceInit & { onCreated?: (i: RPCClient) => void }) {
@@ -104,19 +106,22 @@ class RPCClient extends EventSource {
 		const instance = RPCClient.instances.get(resolved.endpoint)
 
 		if (instance) {
+			instance.filename = resolved.filename
+
 			if (instance.readyState === RPCClient.CONNECTING ||
 				instance.readyState === RPCClient.OPEN) {
+
 				if (resolved.filename) {
+
 					if (instance.#eventsReceived.files) {
-						const file = instance.files.get(resolved.filename)
-						if (file) {
-							instance.emit('file:select', file)
+						if (instance.file) {
+							instance.emit('file:select', instance.file)
 						} else {
 							instance.emit('file:error', {
-								...resolved,
 								error: {
 									status: 404,
-									message: `File "${resolved.filename} not found"`
+									filename: instance.filename,
+									message: `File not found"`
 								}
 							} as any)
 						}
@@ -134,6 +139,7 @@ class RPCClient extends EventSource {
 		this.base = resolved.base || ''
 		this.runtime = resolved.runtime || ''
 		this.endpoint = resolved.endpoint
+		this.filename = resolved.filename
 
 		const emitFiles = debounce(() => this.emit('files'), 100)
 
@@ -145,19 +151,24 @@ class RPCClient extends EventSource {
 			onFetch: (file) => this.emit('file:fetch', file)
 		})
 
-
-
 		this.#on('open', () => {
 			this.emit('open')
-			this.#ready.resolve(this)
+			// if (!resolved.filename) {
+			// 	this.#ready.resolve(this)
+			// }
 		})
-		this.#on('close', () => this.emit('close'))
-		this.#on("error", () => {
+
+		// this.#on('close', (e) => {
+		// 	this.emit('close', e.data)
+		// 	this.#ready.reject(e.data)
+		// })
+
+		this.#on("error", (e) => {
 			this.emit("error")
-			this.#ready.reject()
+			this.#ready.reject(e.data)
 			if (this.readyState === RPCClient.CLOSED) {
-				RPCClient.instances.delete(this.endpoint);
-				this.emit('close')
+				// RPCClient.instances.delete(this.endpoint);
+				this.emit('close', e.data)
 			}
 		})
 		this.#on('update', () => this.emit('update'))
@@ -194,16 +205,19 @@ class RPCClient extends EventSource {
 		this.#on('files', e => {
 			const files = e.data
 			this.files.init(files)
-			if (resolved.filename) {
-				const file = this.files.get(resolved.filename)
-				if (file) {
-					this.emit('file:select', file)
+			this.#ready.resolve(this)
+
+			if (this.filename) {
+				if (this.file) {
+					this.emit('file:select', this.file)
 				} else {
 					this.emit('file:error', {
 						...resolved,
+						status: 404,
 						error: {
 							status: 404,
-							message: `File "${resolved.filename} not found"`
+							filename: this.filename,
+							message: `File not found"`
 						}
 					} as any)
 				}
@@ -211,7 +225,6 @@ class RPCClient extends EventSource {
 		})
 		this.#on("file", (e) => {
 			const file = e.data
-
 			switch (file.type) {
 				case "added":
 					this.files.set(file.path, file)
@@ -232,16 +245,21 @@ class RPCClient extends EventSource {
 		this.emit('created')
 
 		if (resolved.status === 404) {
-			this.close('RESOLVE_FAILED')
+			this.close({
+				url: resolved.url,
+				status: 404,
+				message: 'ENDPOINT_RESOLVE_FAILED'
+			})
 		}
 
 	}
 
 	override close(reason?: any): void {
 		super.close();
-		RPCClient.instances.delete(this.endpoint);
-		RPCClient.files.delete(this)
+		// RPCClient.instances.delete(this.endpoint);
+		// RPCClient.files.delete(this)
 		this.emit('close', reason)
+		this.#ready.reject(reason)
 	}
 
 	#onAll?: (e: RPCEvent) => void
