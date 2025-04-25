@@ -61,20 +61,27 @@ connect.open = () => Promise.all(connect.instances.value.map((instance) => conne
 connect.restore = async (goToLastUrl?: boolean) => {
     const endpoints = connect.history.peek()
     for (const endpoint of endpoints) {
-        await connect(endpoint).ready
+        try { await connect(endpoint).ready } catch (e) {
+            console.warn(`{restore error}`, e)
+        }
     }
     const hashUrl = decodeURIComponent(location.hash.slice(1))
 
-    if (goToLastUrl) {
-        const lastUrl = localStorage.getItem("rpc:url")
-        if (lastUrl) {
-            if (hashUrl === lastUrl)
-                await connect(lastUrl).ready
-            else
-                location.hash = lastUrl
+    try {
+        if (goToLastUrl) {
+            const lastUrl = localStorage.getItem("rpc:url")
+            if (lastUrl) {
+                if (hashUrl === lastUrl)
+                    await connect(lastUrl).ready
+                else
+                    location.hash = lastUrl
+            }
+        } else if (hashUrl) {
+            await connect(hashUrl).ready
         }
-    } else if (hashUrl) {
-        await connect(hashUrl).ready
+    } catch (e) {
+        console.warn(`{restore lastUrl/error}`, e)
+
     }
 }
 
@@ -180,28 +187,36 @@ connect.splitView = signal(false)
 function connect(input: number | string): RPCClient {
     const instance = new RPCClient(input, {
         onCreated(instance) {
-            console.warn(`connect(${input})`)
+            // console.warn(`connect(${input})`)
 
             instance.on('*', (e) => {
                 connect.emit(e.type.replace('rpc:', '') as any, e)
                 connect.onAll?.(e)
             })
 
-            // connect.filesMap.set(instance, signal([]))
-            // connect.instances.value = [...RPCClient.instances.values()]
+            instance.on('open', (e) => {
+                console.log('   $open', e.target.isRestarting, e.target.endpoint, e.target.STATE[e.target.readyState])
 
-            instance.on('open', () => {
                 connect.filesMap.set(instance, signal([]))
-
                 connect.instances.value = [...RPCClient.instances.values()]
             })
 
             instance.on('error', (e) => {
+                console.log('   $error', e.target.isRestarting, e.target.endpoint, e.target.STATE[e.target.readyState])
+                // if (e.target.isRestarting && e.target.readyState === e.target.CLOSED) {
+                //     RPCClient.instances.delete(e.target.endpoint);
+                //     // connect(e.target.endpoint)
+                //     return;
+                // }
                 connect.instances.value = [...RPCClient.instances.values()]
             })
 
+            instance.on("restart", (e) => {
+                console.log('   restart', e.target.isRestarting, e.target.endpoint, e.target.STATE[e.target.readyState])
+            })
+
             instance.on("close", (e) => {
-                if (e.data === 'INSTANCE_STOPPED') {
+                if (e.data === 'INSTANCE_STOPPED' || e.data === 'RESOLVE_FAILED') {
                     RPCClient.instances.delete(instance.endpoint)
                     connect.filesMap.delete(instance)
                 }

@@ -79,7 +79,9 @@ export function AddrBar() {
 
         <input
           type="text"
-          value={connect.url.value.split("://").pop()}
+          placeholder="Welcome"
+          value={(connect.url.value || "")
+            .split("://").pop()}
           onFocus={(e) => {
             e.preventDefault();
             e.currentTarget.value = connect.url.value;

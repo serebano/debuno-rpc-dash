@@ -139,6 +139,15 @@ a:hover {
   text-overflow: ellipsis;
   display: inline;
 }
+.nav li div.label-container-base {
+  font-size: 14px;
+  transition: all 0.3s ease;
+}
+
+.nav li div.label-container-active {
+  color: #fff;
+}
+
 .nav li.file {
   cursor: default;
   padding-left: 9px;

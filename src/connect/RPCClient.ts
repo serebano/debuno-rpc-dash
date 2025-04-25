@@ -3,7 +3,7 @@ import { RPCFiles } from "./RPCFiles.ts";
 import type { RPCFile } from './RPCFile.ts'
 import { debounce, getHeadersSync, parseUrlLike } from "./utils.ts";
 
-type RPCInternalEventNames = 'open' | 'close' | 'error' | 'update' | 'state' | 'files' | 'file' | 'endpoints' | 'imports'
+type RPCInternalEventNames = 'open' | 'close' | 'error' | 'restart' | 'update' | 'state' | 'files' | 'file' | 'endpoints' | 'imports'
 
 type RPCFileEventNames =
 	'file:add' |
@@ -18,6 +18,7 @@ type RPCEventNames =
 	'created' |
 	'open' |
 	'close' |
+	'restart' |
 	'error' |
 	'update' |
 	'files' |
@@ -79,6 +80,7 @@ class RPCClient extends EventSource {
 		RPCClient.instances.forEach((instance) => instance.close(reason))
 	}
 
+	isRestarting: boolean = false;
 	#eventNames: string[] = [];
 	#eventsReceived: Record<string, boolean> = {}
 
@@ -105,31 +107,31 @@ class RPCClient extends EventSource {
 		const resolved = RPCClient.resolve(url)
 		const instance = RPCClient.instances.get(resolved.endpoint)
 
-		if (instance) {
+		if (instance && instance.readyState !== RPCClient.CLOSED) {
 			instance.filename = resolved.filename
 
-			if (instance.readyState === RPCClient.CONNECTING ||
-				instance.readyState === RPCClient.OPEN) {
+			// if (instance.readyState === RPCClient.CONNECTING ||
+			// 	instance.readyState === RPCClient.OPEN) {
 
-				if (resolved.filename) {
+			if (resolved.filename) {
 
-					if (instance.#eventsReceived.files) {
-						if (instance.file) {
-							instance.emit('file:select', instance.file)
-						} else {
-							instance.emit('file:error', {
-								error: {
-									status: 404,
-									filename: instance.filename,
-									message: `File not found"`
-								}
-							} as any)
-						}
+				if (instance.#eventsReceived.files) {
+					if (instance.file) {
+						instance.emit('file:select', instance.file)
+					} else {
+						instance.emit('file:error', {
+							error: {
+								status: 404,
+								filename: instance.filename,
+								message: `File not found"`
+							}
+						} as any)
 					}
 				}
-				return instance
 			}
-			RPCClient.instances.delete(instance.endpoint);
+			return instance
+			// }
+			// RPCClient.instances.delete(instance.endpoint);
 		}
 
 		super(resolved.endpoint, eventSourceInitDict)
@@ -153,6 +155,7 @@ class RPCClient extends EventSource {
 
 		this.#on('open', () => {
 			this.emit('open')
+			this.isRestarting = false
 			// if (!resolved.filename) {
 			// 	this.#ready.resolve(this)
 			// }
@@ -165,11 +168,16 @@ class RPCClient extends EventSource {
 
 		this.#on("error", (e) => {
 			this.emit("error")
-			this.#ready.reject(e.data)
 			if (this.readyState === RPCClient.CLOSED) {
 				// RPCClient.instances.delete(this.endpoint);
 				this.emit('close', e.data)
+				this.#ready.reject(e.data)
 			}
+		})
+		this.isRestarting = false
+		this.#on('restart', (e) => {
+			this.isRestarting = true
+			this.emit('restart', e.data)
 		})
 		this.#on('update', () => this.emit('update'))
 		this.#on("endpoints", e => this.emit('endpoints', e.data))
@@ -179,6 +187,9 @@ class RPCClient extends EventSource {
 			if (state.state === "stopped") {
 				const instance = RPCClient.instances.get(state.endpoint)
 				if (instance) {
+					if (instance.isRestarting) {
+						return
+					}
 					instance.close('INSTANCE_STOPPED');
 				}
 				return;
@@ -245,11 +256,7 @@ class RPCClient extends EventSource {
 		this.emit('created')
 
 		if (resolved.status === 404) {
-			this.close({
-				url: resolved.url,
-				status: 404,
-				message: 'ENDPOINT_RESOLVE_FAILED'
-			})
+			this.close('RESOLVE_FAILED')
 		}
 
 	}
@@ -268,6 +275,8 @@ class RPCClient extends EventSource {
 	on(type: 'open', cb: RPCEventListener): void
 	on(type: 'close', cb: RPCEventListener): void
 	on(type: 'error', cb: RPCEventListener): void
+	on(type: 'restart', cb: RPCEventListener): void
+
 	on(type: 'update', cb: RPCEventListener): void
 	on(type: 'files', cb: RPCEventListener): void
 
@@ -296,6 +305,7 @@ class RPCClient extends EventSource {
 	emit(type: 'open'): void
 	emit(type: 'close', reason?: any): void
 	emit(type: 'error'): void
+	emit(type: 'restart', hint?: any): void
 	emit(type: 'update'): void
 	emit(type: 'created'): void
 	emit(type: 'files'): void
@@ -321,6 +331,7 @@ class RPCClient extends EventSource {
 	#on(type: 'close', cb: RPCInternalEventListener): void
 	#on(type: 'error', cb: RPCInternalEventListener): void
 	#on(type: 'update', cb: RPCInternalEventListener): void
+	#on(type: 'restart', cb: RPCInternalEventListener): void
 	#on(type: 'file', cb: RPCInternalEventListener<RPCFile>): void
 	#on(type: 'files', cb: RPCInternalEventListener<RPCFile[]>): void
 	#on(type: 'imports', cb: RPCInternalEventListener<Record<string, string>>): void
@@ -336,7 +347,11 @@ class RPCClient extends EventSource {
 					const data = e.data
 					Object.defineProperty(e, 'data', {
 						get() {
-							return JSON.parse(data)
+							try {
+								return JSON.parse(data)
+							} catch {
+								return data
+							}
 						},
 						configurable: true,
 						enumerable: true

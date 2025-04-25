@@ -51,18 +51,37 @@ self.addEventListener("activate", (event: ExtendableEvent) => {
     });
 });
 
-// Fetch event: serve from cache, then network fallback
-self.addEventListener("fetch", (event: FetchEvent) => {
+self.addEventListener("fetch", (event) => {
+    // Bypass Service Worker for EventSource (SSE) requests
+    if (event.request.headers.get("accept") === "text/event-stream") {
+        return; // Let the request pass through to the network directly
+    }
+
     event.respondWith(
         caches.match(event.request).then((cachedResponse) => {
-            return cachedResponse || fetch(event.request).catch(async (e) => {
-                console.warn(`   (sw:fetch:catch-all)`, event.request.url, e.message)
-                const res = await caches.match("/index.html");
-                if (!res)
-                    throw new Error(`/index.html cache miss`);
-                return res;
-            })
-        }),
+            return (
+                cachedResponse ||
+                fetch(event.request).then((networkResponse) => {
+                    return networkResponse;
+                })
+            );
+        })
     );
 });
+
+// Fetch event: serve from cache, then network fallback
+// self.addEventListener("fetch", (event: FetchEvent) => {
+//     event.respondWith(
+//         caches.match(event.request).then((cachedResponse) => {
+//             return cachedResponse || fetch(event.request)
+//             // .catch(async (e) => {
+//             //     console.warn(`   (sw:fetch:catch-all)`, event.request.url, e.message)
+//             //     const res = await caches.match("/index.html");
+//             //     if (!res)
+//             //         throw new Error(`/index.html cache miss`);
+//             //     return res;
+//             // })
+//         }),
+//     );
+// });
 

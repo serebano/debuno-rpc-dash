@@ -42,10 +42,12 @@ export function registerServiceWorker() {
                 const uri = decodeURIComponent(url.hash.slice(1))
                 if (uri) {
                     const nUri = uri.split('://').pop()!
-                    await connect.open()
+                    try {
+                        await connect.open()
+                    } catch { }
                     console.log(`   [launchQueue] ${nUri}`);
                     if (decodeURIComponent(location.hash.slice(1)) === nUri)
-                        await connect(nUri).ready
+                        try { await connect(nUri).ready } catch { }
                     else
                         location.hash = nUri
                 }

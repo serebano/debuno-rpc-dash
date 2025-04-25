@@ -40,7 +40,7 @@ connect.init();
 render(<Main />, document.body);
 
 if (import.meta.hot) {
-  await connect.restore();
+  // await connect.restore();
 
   import.meta.hot.dispose(() => {
     connect.close();

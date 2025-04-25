@@ -18,7 +18,8 @@ const readyStates = computed(() => {
 export function Folder(
   { name, node, parentName, endpoint, currentUrl, depth = 0 }: FolderProps,
 ) {
-  const isOpen = (depth === 0 && name === connect.instance.value?.endpoint) ||
+  const isActive = name === connect.instance.value?.endpoint;
+  const isOpen = (depth === 0 && isActive) ||
     hasSelectedItem(node, endpoint, currentUrl, depth);
 
   const onToggle = (e: any) => {
@@ -97,7 +98,13 @@ export function Folder(
         onToggle={onToggle}
       >
         <summary>
-          <div class="label-container">
+          <div
+            class={isBase
+              ? isActive
+                ? "label-container label-container-base label-container-active"
+                : "label-container label-container-base"
+              : "label-container"}
+          >
             <span class="label" title={name}>
               {isBase ? name.split("://").pop() : name}
             </span>
