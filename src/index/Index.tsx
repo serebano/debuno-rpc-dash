@@ -37,8 +37,16 @@ export function Index() {
     <>
       <AddrBar />
       <div id="app">
-        <div class="centered">
+        <div style="padding:50px">
           <History />
+          <div style="padding:20px">
+            <h3>
+              {config.name} <b>{config.version}</b> {config.dev ? "(dev)" : ""}
+            </h3>
+            <a href="https://rpc.debuno.dev" target="_blank">
+              https://rpc.debuno.dev
+            </a>
+          </div>
         </div>
       </div>
     </>

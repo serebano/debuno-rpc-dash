@@ -16,9 +16,9 @@
   display: flex;
   align-items: center;
   justify-content: start;
-  gap: 16px;
+  gap: 0px;
   flex: 1;
-  margin: 8px 16px;
+  margin: 8px 4px;
   /* width: 100%; */
   /* width: calc(100vw - 40px); */
   /* margin-left: 20px; */
@@ -30,6 +30,7 @@
   flex: 1;
   font-size: 14px;
   padding: 10px 16px 10px 16px;
+  margin: 0 8px;
   border-radius: 80px;
   border: 0px solid transparent;
   font-family: system-ui, sans-serif;
@@ -43,23 +44,55 @@
   background: rgb(63 99 139); /* background color of selected text */
   color: white; /* color of selected text */
 }
-.addrbar svg {
-  /* margin-right: -68px; */
+.addrbar a {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
-.addrbar i {
+.addrbar a.refresh i {
+  transform: rotate(90deg);
+}
+.addrbar a i {
   transition: all 0.3s ease;
-  font-weight: 600 !important;
+  font-weight: 500 !important;
 }
-.addrbar i:hover {
+.addrbar a:hover {
   color: rgba(255, 255, 255, 0.9);
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 100px;
+}
+
+.addrbar a.active {
+  color: white;
+}
+
+.input-icons {
+  display: flex;
+  position: relative;
+  padding-right: 16px;
+  margin-left: -96px;
+  width: 76px;
+  opacity: 1;
+  font-size: 14px;
+  font-weight: 200;
+  justify-content: end;
+  align-items: center;
+  gap: 10px;
 }
 
 .file-lang {
-  width: 20px;
-  height: 20px;
+  width: 16px !important;
+  height: 16px !important;
+  border-radius: 200px;
+  overflow: hidden;
+  padding: 0px;
   display: flex;
+  align-items: center;
+  justify-content: center;
   background: rgba(0, 0, 0, 0);
-  filter: grayscale(1);
+  filter: grayscale(0);
   transition: all 0.3s ease;
 }
 .file-lang:hover {
@@ -67,9 +100,11 @@
 }
 
 .file-lang span {
-  width: 100%;
-  height: 100%;
+  width: 58px;
+  height: 58px;
   display: block;
+  margin: -5px;
+  background-position: center;
 
   /* background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20fill%3D%22none%22%20viewBox%3D%220%200%2024%2024%22%3E%3Cpath%20d%3D%22M0%200h24v24H0z%22%2F%3E%3Cpath%20fill%3D%22%2342a5f5%22%20d%3D%22M8%2016h8v2H8zm0-4h8v2H8zm6-10H6c-1.1%200-2%20.9-2%202v16c0%201.1.89%202%201.99%202H18c1.1%200%202-.9%202-2V8zm4%2018H6V4h7v5h5z%22%2F%3E%3C%2Fsvg%3E"); */
 }

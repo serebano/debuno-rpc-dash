@@ -1,3 +1,5 @@
+import { connect } from "@connect/connect.ts";
+
 // deno-lint-ignore-file no-explicit-any prefer-const
 function debounce<T extends (...args: any[]) => void>(
     func: T,
@@ -209,4 +211,37 @@ function ensureSlash(path: string): string {
         : path + "/";
 }
 
-export { parseUrlLike, getHeadersSync, debounce, getLangFromExt }
+function getVSCodeURI(filePath?: string, line?: number, column?: number) {
+    const uri = `vscode://file${(filePath || connect.file.value?.file || connect.instance.value?.path)?.replace('file://', '')}`
+    return new URL([uri, line, column].filter(Boolean).join(':')).href
+
+    // return `vscode://file${(filePath || connect.file.value?.file || connect.instance.value?.path)?.replace('file://', '')}`
+}
+
+function getVSCodeURIElement(): HTMLAnchorElement {
+    const el = document.querySelector('#nav a#vscode-uri')
+    if (!el) {
+        const a = document.createElement('a')
+        a.setAttribute('id', 'vscode-uri')
+        document.querySelector('#nav')!.prepend(a)
+        return a
+    }
+    return el as HTMLAnchorElement
+}
+
+function editFallback(filePath: string, line?: number, column?: number) {
+    const uri = getVSCodeURI(filePath, line, column)
+    console.log('vscodeUri', uri)
+    const a = getVSCodeURIElement() as HTMLAnchorElement & { __t: any }
+    clearTimeout(a.__t)
+    console.log('vscodeUriElement', a)
+    a.setAttribute('href', uri)
+    a.toggleAttribute('open', true)
+    a.textContent = uri
+    a.click()
+    a.__t = setTimeout(() => {
+        a.toggleAttribute('open', false)
+    }, 3000)
+}
+
+export { parseUrlLike, getHeadersSync, debounce, getLangFromExt, editFallback }

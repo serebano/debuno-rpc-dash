@@ -19,7 +19,7 @@ const history = computed(() => {
 function History() {
   return (
     <div style="margin:20px;font-size:14px;">
-      <h2>History</h2>
+      <h2>Recents</h2>
       <ul>
         {history.value.map(({ endpoint, state }) => (
           <li>

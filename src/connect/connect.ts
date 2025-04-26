@@ -141,8 +141,9 @@ connect.init = () => {
     disposeFuncs.push(
         connect.url.subscribe(async url => {
             if (url && url !== 'about') {
+                const instance = connect(url)
                 try {
-                    const instance = await connect(url).ready
+                    await instance.ready
                     localStorage.setItem("rpc:url", url);
                     console.warn(`url => ${url} => connect ok`);
                     if (!instance.filename) {
@@ -150,7 +151,7 @@ connect.init = () => {
                     }
                 } catch (e: any) {
                     console.warn(`url => ${url} => connect fail`);
-                    file.value = { error: { message: e.message || e } } as any
+                    file.value = { error: { inputUrl: url, resolvedUrl: instance.url, message: e.message || e } } as any
                 }
             } else {
                 console.warn(`url => ${url} => other`);
@@ -159,13 +160,7 @@ connect.init = () => {
             }
         }))
 
-    disposeFuncs.push(
-        instances.subscribe((instances) => {
-            // if (!instances.length) {
-            //     location.hash = "";
-            // }
-        }),
-    );
+
 
     connect.disposeFuncs.push(connect.offAll)
 
@@ -195,14 +190,14 @@ function connect(input: number | string): RPCClient {
             })
 
             instance.on('open', (e) => {
-                console.log('   $open', e.target.isRestarting, e.target.endpoint, e.target.STATE[e.target.readyState])
+                console.debug('   $open', e.target.isRestarting, e.target.endpoint, e.target.STATE[e.target.readyState])
 
                 connect.filesMap.set(instance, signal([]))
                 connect.instances.value = [...RPCClient.instances.values()]
             })
 
             instance.on('error', (e) => {
-                console.log('   $error', e.target.isRestarting, e.target.endpoint, e.target.STATE[e.target.readyState])
+                console.debug('   $error', e.target.isRestarting, e.target.endpoint, e.target.STATE[e.target.readyState])
                 // if (e.target.isRestarting && e.target.readyState === e.target.CLOSED) {
                 //     RPCClient.instances.delete(e.target.endpoint);
                 //     // connect(e.target.endpoint)
@@ -212,7 +207,7 @@ function connect(input: number | string): RPCClient {
             })
 
             instance.on("restart", (e) => {
-                console.log('   restart', e.target.isRestarting, e.target.endpoint, e.target.STATE[e.target.readyState])
+                console.debug('   restart', e.target.isRestarting, e.target.endpoint, e.target.STATE[e.target.readyState])
             })
 
             instance.on("close", (e) => {
@@ -254,10 +249,11 @@ function connect(input: number | string): RPCClient {
                     e.data.lang = currentLang
                 connect.file.value = await e.data.fetch()
             }
-            const selectFile: RPCEventListener<RPCFile> = (e) => {
+            const selectFile: RPCEventListener<RPCFile> = async (e) => {
                 const hashUrl = location.hash.slice(1)
+                // console.log(`           selectFile`, { hashUrl, http: e.data.http })
                 if (hashUrl === e.data.http)
-                    fetchFile(e)
+                    await fetchFile(e)
                 else
                     location.hash = e.data.http
             }

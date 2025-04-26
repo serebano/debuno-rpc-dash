@@ -1,5 +1,5 @@
 import type { RPCFiles } from "./RPCFiles.ts";
-import { parseUrlLike } from "./utils.ts";
+import { editFallback, parseUrlLike } from "./utils.ts";
 
 interface RPCFile {
     http: string
@@ -61,11 +61,23 @@ class RPCFile {
         url.searchParams.set(opts.type, opts.format)
         url.searchParams.set('open', '')
 
-        return await (await fetch(url, {
-            headers: {
-                'x-dest': 'document'
+        try {
+            const res = (await fetch(url, {
+                headers: {
+                    'x-dest': 'document'
+                }
+            }))
+
+            if (!res.ok) {
+                editFallback(this.file, opts.line, opts.column)
             }
-        })).text()
+        } catch {
+            editFallback(this.file, opts.line, opts.column)
+        }
+    }
+
+    editFallbak(line?: number, column?: number) {
+        return editFallback(this.file, line, column)
     }
 
     async fetch(init?: (file: this) => Request): Promise<this> {

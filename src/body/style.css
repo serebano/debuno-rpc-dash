@@ -23,6 +23,10 @@
   border-radius: 5px;
 }
 
+.preview-html-iframe {
+  border: none;
+}
+
 pre,
 code,
 .lines-mask,

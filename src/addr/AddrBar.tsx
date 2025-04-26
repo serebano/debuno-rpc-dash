@@ -2,7 +2,7 @@
 import "./style.css";
 import CodIcon from "../codicon/CodIcon.tsx";
 import { connect } from "@connect";
-import { getLangFromExt } from "@connect/utils.ts";
+import { editFallback, getLangFromExt } from "@connect/utils.ts";
 
 function FileLang() {
   return connect.file.value?.http &&
@@ -37,6 +37,7 @@ function FileLang() {
 export function AddrBar() {
   const iconSize = 16;
   const hasGenerated = !!connect.file.value?.sources?.generated;
+  const isHTML = connect.file.value?.lang === "html";
 
   return (
     <div class="addrbar">
@@ -52,20 +53,20 @@ export function AddrBar() {
       >
         {/* <Icon {...iconProps} /> */}
         <a onClick={() => history.back()}>
-          <CodIcon name="arrow-left" size={iconSize + 2} />
+          <CodIcon name="arrow-left" size={iconSize} />
         </a>
         <a onClick={() => history.forward()}>
-          <CodIcon name="arrow-right" size={iconSize + 2} />
+          <CodIcon name="arrow-right" size={iconSize} />
         </a>
 
         <a
-          style="margin-left:8px"
+          class="refresh"
           onClick={async () => {
             connect(connect.url.value).close();
             connect(connect.url.value);
           }}
         >
-          <CodIcon name="refresh" size={iconSize + 2} />
+          <CodIcon name="refresh" size={iconSize} />
         </a>
 
         <input
@@ -82,38 +83,58 @@ export function AddrBar() {
             e.preventDefault();
             e.currentTarget.value = connect.url.value.split("://").pop()!;
           }}
+          // style={connect.file.value?.version ? "margin-right:-5em" : ""}
         />
-        <FileLang />
-        {hasGenerated
+        <div class="input-icons">
+          {connect.file.value?.version
+            ? (
+              <span style="opacity:0.5;font-size:14px;font-weight:200">
+                {"v" + connect.file.value?.version}
+              </span>
+            )
+            : null}
+
+          <FileLang />
+        </div>
+
+        {hasGenerated || isHTML
           ? (
             <a
-              style={{
-                background: "transparent",
-                border: "none",
-                padding: "0",
-                margin: "0",
-                color: "inherit",
-              }}
+              class={`${connect.splitView.value ? "active" : ""}`}
               onClick={() => {
                 connect.splitView.value = !connect.splitView.value;
               }}
             >
-              <CodIcon name="split-horizontal" size={iconSize} />
+              <CodIcon name="open-preview" size={iconSize} />
             </a>
           )
           : null}
-        <a
-          style={{
-            background: "transparent",
-            border: "none",
-            padding: "0",
-            margin: "0",
-            color: "inherit",
-          }}
-          onClick={() => window.open(connect.url.value, "rpc")}
-        >
-          <CodIcon name="link-external" size={iconSize} />
-        </a>
+        {connect.instance.value?.path || connect.file.value?.file
+          ? (
+            <a
+              title={`Edit ${
+                connect.file.value?.file! || connect.instance.value?.path!
+              }`}
+              onClick={(e) => {
+                e.preventDefault();
+                editFallback(
+                  connect.file.value?.file! || connect.instance.value?.path!,
+                );
+              }}
+            >
+              <CodIcon name="vscode-insiders" size={iconSize} />
+            </a>
+          )
+          : null}
+        {connect.file.value
+          ? (
+            <a
+              onClick={() => window.open(connect.file.value?.http, "rpc")}
+            >
+              <CodIcon name="link-external" size={iconSize - 1} />
+            </a>
+          )
+          : null}
       </form>
     </div>
   );

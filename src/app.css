@@ -38,6 +38,23 @@ a:hover {
   position: relative;
   overflow: auto;
 }
+#nav a#vscode-uri[open] {
+  opacity: 1;
+}
+#nav a#vscode-uri {
+  border-radius: 100px;
+  position: fixed;
+  bottom: 10px;
+  left: 10px;
+  z-index: 999999999;
+  background: rgb(19, 21, 24);
+  font-size: 11px;
+  display: block;
+  padding: 3px 12px;
+  transition: all 0.2s ease;
+  opacity: 0;
+}
+
 #body {
   background: #282c34;
   position: relative;
