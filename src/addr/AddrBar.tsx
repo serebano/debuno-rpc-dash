@@ -47,8 +47,6 @@ export function AddrBar() {
           // @ts-ignore ...
           const value = e.currentTarget[0].value;
           location.hash = value;
-          // @ts-ignore .
-          // e.currentTarget[0].blur();
         }}
       >
         {/* <Icon {...iconProps} /> */}
@@ -61,9 +59,12 @@ export function AddrBar() {
 
         <a
           class="refresh"
-          onClick={async () => {
-            connect(connect.url.value).close();
-            connect(connect.url.value);
+          onClick={() => {
+            const currentHash = location.hash.slice(1);
+            connect.url.value = "*";
+            setTimeout(() => {
+              connect.url.value = currentHash;
+            }, 300);
           }}
         >
           <CodIcon name="refresh" size={iconSize} />
@@ -72,7 +73,9 @@ export function AddrBar() {
         <input
           type="text"
           placeholder="Welcome"
-          value={(connect.url.value || "")
+          value={(connect.url.value === "*"
+            ? location.hash.slice(1)
+            : (connect.url.value || ""))
             .split("://").pop()}
           onFocus={(e) => {
             e.preventDefault();

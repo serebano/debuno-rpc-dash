@@ -92,7 +92,7 @@
   align-items: center;
   justify-content: center;
   background: rgba(0, 0, 0, 0);
-  filter: grayscale(0);
+  filter: grayscale(1);
   transition: all 0.3s ease;
 }
 .file-lang:hover {

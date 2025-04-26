@@ -1,24 +1,25 @@
-import { render } from "preact";
 import "./sw-register.ts";
+import { render } from "preact";
 import { App } from "./app.tsx";
-import { Index } from "./index/Index.tsx";
-import { About } from "./about.tsx";
-import * as signals from "@signals";
-import * as actions from "@actions";
 import * as utils from "@utils";
 import { connect } from "@connect";
+import pages from "./pages/index.ts";
+import { AddrBar } from "./addr/AddrBar.tsx";
 
-Object.assign(globalThis, { utils, signals, actions });
+Object.assign(globalThis, { utils });
 
 function Main() {
-  switch (connect.url.value) {
-    case "":
-      return <Index />;
-    case "about":
-      return <About />;
-    default:
-      return <App />;
-  }
+  const url = connect.url.value;
+  const Page = url in pages ? pages[url as keyof typeof pages] : App;
+
+  return (
+    <>
+      <AddrBar />
+      <div id="app" class={url === "*" ? "reloading" : "reloaded"}>
+        <Page />
+      </div>
+    </>
+  );
 }
 
 connect.on("*", (e) => {
@@ -37,7 +38,7 @@ connect.init();
 //   await connect.restore();
 // }
 
-render(<Main />, document.body);
+render(<Main />, document.querySelector("#rpcapp")!);
 
 if (import.meta.hot) {
   // await connect.restore();

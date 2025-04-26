@@ -1,6 +1,122 @@
 #!/bin/sh
+set -e
 
-git clone https://github.com/serebano/debuno-rpc.git ./myrpc
-cd ./myrpc
-deno run build
-./install
+RPC_DIR="$HOME/debuno-rpc"
+BACKUP_DIR="$HOME/debuno-rpc-backup-$(date +%Y%m%d%H%M%S)"
+REPO_URL="https://github.com/serebano/debuno-rpc.git"
+MAX_RETRIES=3
+TARGET_BRANCH="main"  # Change if needed
+
+# Colors for pretty logs
+GREEN="\033[0;32m"
+YELLOW="\033[1;33m"
+RED="\033[0;31m"
+RESET="\033[0m"
+
+log() {
+  printf "%b\n" "$1$2$RESET"
+}
+
+retry() {
+  local n=0
+  until [ $n -ge $MAX_RETRIES ]; do
+    "$@" && break
+    n=$((n+1))
+    log "$YELLOW" "Retry $n/$MAX_RETRIES..."
+    sleep 2
+  done
+  if [ $n -eq $MAX_RETRIES ]; then
+    log "$RED" "Failed after $MAX_RETRIES attempts."
+    exit 1
+  fi
+}
+
+backup_repo() {
+  log "$YELLOW" "Creating a backup at $BACKUP_DIR..."
+  cp -r "$RPC_DIR" "$BACKUP_DIR"
+  log "$GREEN" "Backup complete."
+}
+
+check_branch() {
+  local current_branch
+  current_branch=$(git rev-parse --abbrev-ref HEAD)
+  if [ "$current_branch" != "$TARGET_BRANCH" ]; then
+    log "$RED" "You are on branch '$current_branch', not '$TARGET_BRANCH'."
+    echo "Switch manually before running this script."
+    exit 1
+  fi
+}
+
+update_repo() {
+  log "$GREEN" "Updating existing repo at $RPC_DIR..."
+  cd "$RPC_DIR"
+
+  check_branch
+
+  retry git fetch
+
+  LOCAL=$(git rev-parse @)
+  REMOTE=$(git rev-parse @{u})
+  BASE=$(git merge-base @ @{u})
+
+  if [ "$LOCAL" = "$REMOTE" ]; then
+    log "$GREEN" "Already up to date."
+  elif [ "$LOCAL" = "$BASE" ]; then
+    log "$YELLOW" "Local is behind, preparing to pull..."
+
+    backup_repo
+
+    if ! git diff --quiet || ! git diff --cached --quiet; then
+      log "$YELLOW" "Local changes detected, stashing..."
+      git stash push -m "Auto-stash before update"
+      STASHED=true
+    else
+      STASHED=false
+    fi
+
+    retry git pull --ff-only
+
+    if [ "$STASHED" = true ]; then
+      if git stash list | grep -q "Auto-stash before update"; then
+        log "$YELLOW" "Reapplying stashed changes..."
+        if git stash pop; then
+          log "$GREEN" "Stashed changes reapplied cleanly."
+        else
+          log "$RED" "⚠️ Conflict while applying stash. Check manually!"
+          exit 1
+        fi
+      fi
+    fi
+
+  else
+    log "$RED" "⚠️ Local repo has diverged from remote!"
+    backup_repo
+    echo "Please fix manually."
+    exit 1
+  fi
+}
+
+clone_repo() {
+  log "$YELLOW" "Cloning fresh repo into $RPC_DIR..."
+  retry git clone "$REPO_URL" "$RPC_DIR"
+  cd "$RPC_DIR"
+}
+
+run_install() {
+  if [ -x "./install" ]; then
+    log "$GREEN" "Running install script..."
+    ./install
+  else
+    log "$RED" "Install script not found or not executable."
+    exit 1
+  fi
+}
+
+# Main flow
+if [ -d "$RPC_DIR" ]; then
+  update_repo
+else
+  clone_repo
+fi
+
+run_install

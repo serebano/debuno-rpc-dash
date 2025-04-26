@@ -31,6 +31,13 @@ a:hover {
   width: 100vw;
   top: 56px;
   position: relative;
+  transition: all 0.3s ease-in-out;
+}
+.reloading {
+  opacity: 0;
+}
+.reloaded {
+  opacity: 1;
 }
 #nav {
   width: 250px;

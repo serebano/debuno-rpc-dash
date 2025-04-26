@@ -59,11 +59,11 @@ a:hover {
   padding: 0;
   cursor: pointer;
   touch-action: none;
-  padding: 0px 0px 0px 22px;
+  padding: 12px 0px 0px 22px;
 }
 
 .nav:first-child {
-  padding-top: 12px;
+  padding-top: 12px !important;
 }
 
 .nav ul {

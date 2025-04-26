@@ -1,0 +1,40 @@
+.page-install {
+  padding-left: 15%;
+  padding-top: 15%;
+}
+.page-about {
+  padding-left: 15%;
+  padding-top: 15%;
+}
+.page-install pre {
+  margin-bottom: 10px;
+}
+.page-install pre, .page-install code {
+  font-size: 16px;
+  font-family: monospace;
+  user-select: text;
+  color: rgba(255, 255, 255, 0.8);
+}
+.install-title {
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  line-height: 1.1;
+  color: rgba(255, 255, 255, 0.9);
+  font-family:
+    Inter,
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    "Helvetica Neue",
+    Arial,
+    "Noto Sans",
+    sans-serif;
+}
+.install-title span {
+  font-weight: 400;
+  font-size: 75%;
+  opacity: 0.5;
+}
