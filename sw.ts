@@ -8,7 +8,10 @@ const urlsToCache = [
     "/codicon.ttf",
     "/main.js",
     "/main.css",
-    "/manifest.json"
+    "/manifest.json",
+    "./install",
+    "./install.sh",
+    "./install.md"
 ];
 
 const self = (globalThis as unknown as ServiceWorkerGlobalScope)
