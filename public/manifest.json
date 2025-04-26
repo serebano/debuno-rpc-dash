@@ -1,5 +1,5 @@
 {
-    "name": "Debuno RPC Dash [DEV]",
+    "name": "Debuno RPC Dash",
     "short_name": "Debuno RPC Dash",
     "description": "Debuno RPC Dashboard",
     "start_url": "/",
@@ -17,7 +17,7 @@
     ],
     "protocol_handlers": [
         {
-            "protocol": "web+rpcdev",
+            "protocol": "web+rpc",
             "url": "/#%s"
         }
     ],
