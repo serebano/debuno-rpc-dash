@@ -171,11 +171,11 @@ connect.init = () => {
 
     disposeFuncs.push(
         connect.url.subscribe(onUrlChange),
-        connect.instances.subscribe(instances => {
-            if (!instances.length && !connect.file.value) {
-                location.hash = '#'
-            }
-        })
+        // connect.instances.subscribe(instances => {
+        //     if (!instances.length && !connect.file.value) {
+        //         location.hash = '#'
+        //     }
+        // })
     )
 
 

@@ -17,6 +17,7 @@ export function Welcome() {
         </h3>
         <a href="https://rpc.debuno.dev" target="_blank" style="color:#d0cd2c">
           https://rpc.debuno.dev
+          {}
         </a>
       </div>
     </div>

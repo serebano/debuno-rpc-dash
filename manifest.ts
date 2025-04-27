@@ -6,7 +6,7 @@ const ENV = process.env.RPC_ENV || 'prod'
 const DEV = ENV === 'dev'
 
 const manifest = {
-    "name": `${pkg.displayName}${DEV ? ' [DEV]' : ''}`,
+    "name": `${DEV ? ' [DEV] ' : ''}${pkg.displayName}`,
     "short_name": pkg.displayName,
     "description": pkg.description,
     "start_url": "/",
