@@ -1,5 +1,5 @@
 {
-    "name": " [DEV] Debuno RPC Inspector",
+    "name": "Debuno RPC Inspector",
     "short_name": "Debuno RPC Inspector",
     "description": "Debuno RPC Inspector",
     "start_url": "/",
@@ -17,7 +17,7 @@
     ],
     "protocol_handlers": [
         {
-            "protocol": "web+rpcdev",
+            "protocol": "web+rpc",
             "url": "/#%s"
         }
     ],

@@ -46,7 +46,7 @@ export function Install() {
                     const selection = window.getSelection();
                     selection?.removeAllRanges();
                     selection?.addRange(range);
-                  }}>rpc create myapp --sic</code></pre>
+                  }}>rpc create myapp -sic</code></pre>
         <div>
           <i>[s] - Start</i>
         </div>
