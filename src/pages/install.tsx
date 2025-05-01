@@ -7,6 +7,9 @@ async function fetchPkg() {
   try {
     return await (await fetch(
       `https://raw.githubusercontent.com/serebano/debuno-rpc/refs/heads/main/package.json?cache_bust=${Date.now()}`,
+      {
+        headers: {},
+      },
     )).json();
   } catch (e) {
     console.warn(`(fetchPkg) error`, e);

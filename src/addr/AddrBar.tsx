@@ -3,6 +3,7 @@ import "./style.css";
 import CodIcon from "../codicon/CodIcon.tsx";
 import { connect } from "@connect";
 import { editFallback, getLangFromExt } from "@connect/utils.ts";
+import { useFocusHotKey } from "../hooks/useFocusHotKey.ts";
 
 function FileLang() {
   return connect.file.value?.http &&
@@ -39,6 +40,9 @@ export function AddrBar() {
   const hasGenerated = !!connect.file.value?.sources?.generated;
   const isHTML = connect.file.value?.lang === "html";
 
+  const file = connect.file.value;
+  const inputRef = useFocusHotKey();
+
   return (
     <div class="addrbar">
       <form
@@ -71,6 +75,7 @@ export function AddrBar() {
         </a>
 
         <input
+          ref={inputRef}
           type="text"
           placeholder="Welcome"
           value={(connect.url.value === "*"
@@ -89,10 +94,10 @@ export function AddrBar() {
           // style={connect.file.value?.version ? "margin-right:-5em" : ""}
         />
         <div class="input-icons">
-          {connect.file.value?.version
+          {file?.version
             ? (
               <span style="opacity:0.5;font-size:14px;font-weight:200">
-                {"v" + connect.file.value?.version}
+                {"v" + file.version}
               </span>
             )
             : null}
@@ -100,7 +105,7 @@ export function AddrBar() {
           <FileLang />
         </div>
 
-        {hasGenerated || isHTML
+        {hasGenerated
           ? (
             <a
               class={`${connect.splitView.value ? "active" : ""}`}
@@ -109,6 +114,24 @@ export function AddrBar() {
               }}
             >
               <CodIcon name="open-preview" size={iconSize} />
+            </a>
+          )
+          : null}
+        {isHTML
+          ? (
+            <a
+              class={`${connect.preview.value ? "active" : ""}`}
+              onClick={() => {
+                connect.preview.value = !connect.preview.value;
+
+                if (connect.preview.value === true) {
+                  connect.previewFile.value = connect.file.value;
+                } else {
+                  connect.previewFile.value = undefined;
+                }
+              }}
+            >
+              <CodIcon name="preview" size={iconSize} />
             </a>
           )
           : null}

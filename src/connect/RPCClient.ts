@@ -143,7 +143,10 @@ class RPCClient extends EventSource {
 		this.endpoint = resolved.endpoint
 		this.filename = resolved.filename
 
-		const emitFiles = debounce(() => this.emit('files'), 100)
+		const emitFiles = debounce(() => {
+			if (this.readyState === this.OPEN)
+				this.emit('files')
+		}, 100)
 
 		this.files = new RPCFiles(this, {
 			onInit: () => this.emit('files'),

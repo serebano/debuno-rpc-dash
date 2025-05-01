@@ -4,6 +4,11 @@ import EditorHeader from "./EditorHeader.tsx";
 import { connect } from "@connect";
 
 function EditorView(params: { source: "original" | "generated" }) {
+  if (params.source === "generated") {
+    const hasGenerated = !!connect.file.value?.sources?.generated &&
+      connect.splitView.value === true;
+    if (!hasGenerated) return null;
+  }
   return (
     <div class="preview main">
       <EditorHeader />
@@ -13,10 +18,19 @@ function EditorView(params: { source: "original" | "generated" }) {
 }
 
 function HTMLView() {
+  const isHTML = connect.preview.value === true;
+  //connect.file.value?.lang === "html" &&
+
+  if (!isHTML) {
+    return null;
+  }
   return (
     <div class="preview main">
+      <div>
+        {connect.previewFile.value?.http} ({connect.previewFile.value?.version})
+      </div>
       <iframe
-        src={connect.file.value?.http}
+        src={connect.previewFile.value?.http}
         width="100%"
         height="100%"
         allowTransparency
@@ -28,27 +42,11 @@ function HTMLView() {
 }
 
 export default function Editor() {
-  const hasGenerated = !!connect.file.value?.sources?.generated &&
-    connect.splitView.value === true;
-  const isHTML = connect.file.value?.lang === "html" &&
-    connect.splitView.value === true;
   return (
     <div id="body" class="editor">
-      {hasGenerated
-        ? (
-          <>
-            <EditorView key="original" source="original" />
-            <EditorView key="generated" source="generated" />
-          </>
-        )
-        : isHTML
-        ? (
-          <>
-            <EditorView key="original" source="original" />
-            <HTMLView key="preview" />
-          </>
-        )
-        : <EditorView key="original" source="original" />}
+      <EditorView key="original" source="original" />
+      <EditorView key="generated" source="generated" />
+      <HTMLView key="preview" />
     </div>
   );
 }
