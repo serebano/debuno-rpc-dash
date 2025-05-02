@@ -6,6 +6,13 @@
   padding-left: 15%;
   padding-top: 15%;
 }
+.page-install .title {
+  font-size: 16px;
+  margin: 16px 0 8px 0;
+}
+.page-install .repo a {
+  color: rgba(79, 134, 247);
+}
 .page-install pre {
   margin-bottom: 10px;
   font-size: 15px;

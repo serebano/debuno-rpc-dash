@@ -29,7 +29,7 @@
   display: block;
   flex: 1;
   font-size: 14px;
-  padding: 10px 16px 10px 16px;
+  padding: 10px 16px 10px 36px;
   margin: 0 8px;
   border-radius: 80px;
   border: 0px solid transparent;
@@ -50,22 +50,44 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  border-radius: 100px;
 }
 .addrbar a.refresh i {
   transform: rotate(90deg);
 }
 .addrbar a i {
-  transition: all 0.3s ease;
+  transition: all 0.2s ease-in-out;
   font-weight: 500 !important;
 }
 .addrbar a:hover {
   color: rgba(255, 255, 255, 0.9);
   background: rgba(0, 0, 0, 0.2);
-  border-radius: 100px;
 }
 
 .addrbar a.active {
   color: white;
+}
+
+.input-icons-start {
+  margin-right: -40px;
+  z-index: 9;
+}
+
+.input-icons-start a {
+  background: rgb(40 44 52);
+  width: 28px;
+  height: 28px;
+}
+.input-icons-start a.active {
+  background: rgb(101 157 247);
+  /* rgba(79, 134, 247); */
+}
+.input-icons-start a.active i {
+  font-weight: bolder !important;
+  color: white !important;
+}
+.input-icons-start a:hover {
+  background: rgb(56, 62, 73);
 }
 
 .input-icons {

@@ -1,12 +1,12 @@
 import { History } from "./history.tsx";
 import "../app.css";
 import config from "@config";
-import { Install } from "./install.tsx";
+import { Guide } from "./guide.tsx";
 
 export function Welcome() {
   return (
     <div style="width:100%;height:100%;display:flex;flex-direction:column">
-      {localStorage.getItem("rpc:url") ? <History /> : <Install />}
+      {localStorage.getItem("rpc:url") ? <History /> : <Guide />}
       <div style="flex:1"></div>
       <div style="padding-left:15%;padding-bottom:50px">
         <h3>

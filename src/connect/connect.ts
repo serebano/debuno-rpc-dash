@@ -88,12 +88,7 @@ connect.restore = async (goToLastUrl?: boolean) => {
 }
 
 connect.instance = signal<RPCClient | undefined>()
-// connect.instance = computed(() => {
-//     const url = connect.url.value
-//     const isPage = url in pages
-//     if (!isPage && connect.file.value?.endpoint)
-//         return RPCClient.instances.get(connect.file.value?.endpoint)
-// })
+
 
 connect.state = computed(() => ({
     url: connect.url.value,
@@ -109,6 +104,7 @@ connect.state = computed(() => ({
 
 const onUrlChange = async (url: string) => {
     const isPage = url in pages
+    document.title = url.split('://').pop() || 'index'
     if (!isPage) {
         const instance = connect(url)
         connect.instance.value = instance
@@ -204,6 +200,14 @@ const updateInstances = debounce(() => {
 connect.splitView = signal(false)
 connect.preview = signal(false)
 connect.previewFile = signal<RPCFile | undefined>()
+connect.infoView = signal(false)
+connect.reload = debounce(() => {
+    const currentHash = location.hash.slice(1);
+    connect.url.value = "*";
+    setTimeout(() => {
+        connect.url.value = currentHash;
+    }, 100);
+}, 50)
 
 let currentLang: string | undefined
 let closedInstancePath: string | undefined

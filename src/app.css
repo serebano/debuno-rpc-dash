@@ -1,5 +1,5 @@
 body {
-  background: #282c34;
+  background: rgb(33 37 43);
   color: #abb2bf;
   margin: 0;
   padding: 0;
@@ -31,7 +31,8 @@ a:hover {
   width: 100vw;
   top: 56px;
   position: relative;
-  transition: all 0.3s ease-in-out;
+  transition: all 0.2s ease-in-out;
+  background: #282c34;
 }
 .reloading {
   opacity: 0;

@@ -4,6 +4,7 @@ import CodIcon from "../codicon/CodIcon.tsx";
 import { connect } from "@connect";
 import { editFallback, getLangFromExt } from "@connect/utils.ts";
 import { useFocusHotKey } from "../hooks/useFocusHotKey.ts";
+import { useHotKey } from "../hooks/useHotKey.ts";
 
 function FileLang() {
   return connect.file.value?.http &&
@@ -43,6 +44,26 @@ export function AddrBar() {
   const file = connect.file.value;
   const inputRef = useFocusHotKey();
 
+  useHotKey("cmd+i", () => {
+    connect.infoView.value = !connect.infoView.value;
+  }, { preventDefault: true });
+
+  useHotKey("cmd+r", () => {
+    connect.reload();
+  }, { preventDefault: true });
+
+  useHotKey("cmd+g", () => {
+    location.hash = "guide";
+  }, { preventDefault: true });
+
+  useHotKey("cmd+a", () => {
+    location.hash = "about";
+  }, { preventDefault: true });
+
+  useHotKey("cmd+/", () => {
+    location.hash = "";
+  }, { preventDefault: true });
+
   return (
     <div class="addrbar">
       <form
@@ -64,16 +85,23 @@ export function AddrBar() {
         <a
           class="refresh"
           onClick={() => {
-            const currentHash = location.hash.slice(1);
-            connect.url.value = "*";
-            setTimeout(() => {
-              connect.url.value = currentHash;
-            }, 300);
+            connect.reload();
           }}
         >
           <CodIcon name="refresh" size={iconSize} />
         </a>
-
+        <div style="width:8px"></div>
+        <div class="input-icons-start">
+          <a
+            class={connect.infoView.value ? `active` : ``}
+            onClick={() => {
+              connect.infoView.value = !connect.infoView.value;
+              console.log({ info: connect.file.value });
+            }}
+          >
+            <CodIcon name="info" size={iconSize} />
+          </a>
+        </div>
         <input
           ref={inputRef}
           type="text"
@@ -91,7 +119,6 @@ export function AddrBar() {
             e.preventDefault();
             e.currentTarget.value = connect.url.value.split("://").pop()!;
           }}
-          // style={connect.file.value?.version ? "margin-right:-5em" : ""}
         />
         <div class="input-icons">
           {file?.version
