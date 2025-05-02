@@ -48,15 +48,24 @@ export function AddrBar() {
     connect.infoView.value = !connect.infoView.value;
   }, { preventDefault: true });
 
+  useHotKey("cmd+.", () => {
+    connect.infoView.value = !connect.infoView.value;
+  }, { preventDefault: true });
+
+  useHotKey(`cmd+\\`, () => {
+    connect.splitView.value = !connect.splitView.value;
+    console.log("cmd+|", connect.splitView.value);
+  }, { preventDefault: true });
+
   useHotKey("cmd+r", () => {
     connect.reload();
   }, { preventDefault: true });
 
-  useHotKey("cmd+g", () => {
+  useHotKey("cmd+'", () => {
     location.hash = "guide";
   }, { preventDefault: true });
 
-  useHotKey("cmd+a", () => {
+  useHotKey("cmd+,", () => {
     location.hash = "about";
   }, { preventDefault: true });
 

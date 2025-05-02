@@ -46,6 +46,7 @@ export function TreeView(
         typeof value === "string"
           ? (
             <File
+              key={value}
               name={key}
               url={value}
               endpoint={endpoint}
@@ -54,6 +55,7 @@ export function TreeView(
           )
           : (
             <Folder
+              key={parentName + key}
               parentName={parentName}
               name={key}
               node={value}

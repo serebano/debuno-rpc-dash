@@ -1,0 +1,35 @@
+#infopanel {
+  display: flex;
+  flex-direction: column;
+  max-height: 50%;
+}
+#infopanel .separator {
+  border: 1px solid rgb(33 37 43);
+}
+#infopanel .title {
+  background: rgb(33 37 43);
+  height: 24px;
+  display: flex;
+  font-size: 11px;
+  text-transform: uppercase;
+  padding: 0 8px;
+  align-items: center;
+}
+#infopanel .content {
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 16px;
+}
+#infopanel .content a {
+  color: rgba(79, 134, 247);
+}
+#infopanel .content pre {
+  overflow: auto;
+}
+
+#infopanel .summary {
+  font-size: 11px;
+  text-transform: uppercase;
+}

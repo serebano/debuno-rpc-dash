@@ -1,5 +1,5 @@
 body {
-  background: rgb(33 37 43);
+  background: #282c34;
   color: #abb2bf;
   margin: 0;
   padding: 0;
@@ -27,7 +27,7 @@ a:hover {
 }
 #app {
   display: flex;
-  height: calc(100vh - 56px);
+  height: calc(100vh - 80px);
   width: 100vw;
   top: 56px;
   position: relative;
@@ -40,11 +40,19 @@ a:hover {
 .reloaded {
   opacity: 1;
 }
+#sidepanel {
+  width: 350px;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  transition: width 0.2s ease-in-out;
+}
 #nav {
-  width: 250px;
+  width: 100%;
   /* background: #21252b; */
   position: relative;
   overflow: auto;
+  flex: 1;
 }
 #nav a#vscode-uri[open] {
   opacity: 1;
@@ -66,7 +74,8 @@ a:hover {
 #body {
   background: #282c34;
   position: relative;
-  width: calc(100vw - 250px);
+  width: 100%;
+  flex: 1;
   overflow: auto;
 }
 
@@ -81,4 +90,17 @@ a:hover {
 
 .editor {
   display: flex;
+}
+
+#statusbar {
+  background: rgb(33 37 43);
+  height: 24px;
+  width: 100%;
+  gap: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: start;
+  position: absolute;
+  bottom: 0px;
+  font-size: 11px;
 }

@@ -3,6 +3,8 @@ import { TreeView } from "./components/TreeView.tsx";
 
 import { computed } from "@preact/signals";
 import { connect } from "@connect";
+import { useRef } from "preact/hooks";
+import { ScrollContainerContext } from "./scroll-container-context.ts";
 
 const mapping = computed(() => {
   const files = connect.files.value;
@@ -34,33 +36,19 @@ interface Endpoint {
 // });
 
 export default function Nav() {
-  // const { mapping, currentUrl } = state.value;
+  const containerRef = useRef<HTMLDivElement>(null);
 
-  // const entries = Object.values(endpoints.value);
-  // return (
-  //   <div id="nav">
-  //     {entries.map((entry) => {
-  //       return (
-  //         <TreeView
-  //           key={entry.endpoint}
-  //           node={entry.files}
-  //           parentName=""
-  //           currentUrl={connect.url.value}
-  //           endpoint={entry.endpoint}
-  //         />
-  //       );
-  //     })}
-  //   </div>
-  // );
   return (
-    <div id="nav">
+    <div id="nav" ref={containerRef}>
       {/* <NavHeader /> */}
-      <TreeView
-        node={mapping.value}
-        parentName=""
-        currentUrl={connect.file.value?.http || ""}
-        endpoint={connect.file.value?.endpoint!}
-      />
+      <ScrollContainerContext.Provider value={containerRef.current}>
+        <TreeView
+          node={mapping.value}
+          parentName=""
+          currentUrl={connect.file.value?.http || ""}
+          endpoint={connect.file.value?.endpoint!}
+        />
+      </ScrollContainerContext.Provider>
     </div>
   );
 }

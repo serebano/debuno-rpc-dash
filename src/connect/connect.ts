@@ -201,6 +201,7 @@ connect.splitView = signal(false)
 connect.preview = signal(false)
 connect.previewFile = signal<RPCFile | undefined>()
 connect.infoView = signal(false)
+connect.sidePanelWidth = signal(350)
 connect.reload = debounce(() => {
     const currentHash = location.hash.slice(1);
     connect.url.value = "*";

@@ -5,6 +5,7 @@ import * as utils from "@utils";
 import { connect } from "@connect";
 import pages from "./pages/index.ts";
 import { AddrBar } from "./addr/AddrBar.tsx";
+import { StatusBar } from "./statusbar/StatusBar.tsx";
 
 Object.assign(globalThis, { utils });
 
@@ -18,6 +19,7 @@ function Main() {
       <div id="app" class={url === "*" ? "reloading" : "reloaded"}>
         <Page />
       </div>
+      <StatusBar />
     </>
   );
 }
@@ -34,9 +36,6 @@ connect.on("*", (e) => {
 });
 
 connect.init();
-// if (import.meta.hot) {
-//   await connect.restore();
-// }
 
 render(<Main />, document.querySelector("#rpcapp")!);
 
