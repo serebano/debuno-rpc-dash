@@ -1,7 +1,8 @@
 #infopanel {
   display: flex;
   flex-direction: column;
-  max-height: 50%;
+  height: 100%;
+  overflow: auto;
 }
 #infopanel .separator {
   border: 1px solid rgb(33 37 43);
@@ -16,19 +17,22 @@
   align-items: center;
 }
 #infopanel .content {
-  overflow: auto;
+  word-break: break-all;
   display: flex;
   flex-direction: column;
   gap: 8px;
   padding: 16px;
+  font-size: 12px;
 }
 #infopanel .content a {
   color: rgba(79, 134, 247);
 }
+#infopanel .content a:hover {
+  text-decoration: underline;
+}
 #infopanel .content pre {
   overflow: auto;
 }
-
 #infopanel .summary {
   font-size: 11px;
   text-transform: uppercase;

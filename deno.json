@@ -1,6 +1,6 @@
 {
   "name": "@debuno/rpc-dash",
-  "version": "0.7.3",
+  "version": "0.7.4",
   "displayName": "Debuno RPC Inspector",
   "description": "Debuno RPC Inspector",
   "exports": {
@@ -39,6 +39,7 @@
     "@preact/preset-vite": "npm:@preact/preset-vite@^2.10.1",
     "@preact/signals": "npm:@preact/signals@^2.0.1",
     "preact": "npm:preact@^10.26.2",
+    "react-resizable-panels": "npm:react-resizable-panels@^3.0.1",
     "vite": "npm:vite@^6.1.1",
     "@signals": "./src/signals.ts",
     "@signals/": "./src/signals/",
@@ -51,5 +52,6 @@
     "@config": "./src/config.ts",
     "@connect": "./src/connect/connect.ts",
     "@connect/": "./src/connect/"
-  }
+  },
+  "nodeModulesDir": "auto"
 }

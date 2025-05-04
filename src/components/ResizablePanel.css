@@ -1,0 +1,42 @@
+.col-resize-handler {
+  width: 2px;
+  cursor: col-resize;
+  background-color: rgb(33 37 43);
+  position: relative;
+}
+.col-resize-handler::before {
+  width: 4px;
+  height: 100%;
+  position: absolute;
+  background-color: transparent;
+  transition: background-color 0.1s ease-out;
+  content: "";
+  z-index: 9999;
+  left: -1px;
+}
+.row-resize-handler {
+  height: 2px;
+  cursor: row-resize;
+  background-color: rgb(33 37 43);
+  position: relative;
+}
+.row-resize-handler::before {
+  height: 4px;
+  width: 100%;
+  position: absolute;
+  background-color: transparent;
+  transition: background-color 0.1s ease-out;
+  content: "";
+  z-index: 9999;
+  top: -1px;
+}
+
+.col-resize-handler:hover,
+.row-resize-handler:hover {
+  background: transparent;
+}
+
+.col-resize-handler:hover::before,
+.row-resize-handler:hover::before {
+  background-color: #007fd4;
+}

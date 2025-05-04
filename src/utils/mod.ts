@@ -1,8 +1,6 @@
 import type { XURL } from "@xurl";
-import { xurl } from "@signals";
 import config from "@config";
 import { connect } from "@connect";
-import type { RPCFile } from "../connect/RPCFile.ts";
 
 export function getFileExtension(filename: string): string | null {
     const match = filename.match(/\.([a-zA-Z0-9.]+)$/);

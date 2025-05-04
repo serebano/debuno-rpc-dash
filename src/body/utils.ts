@@ -1,8 +1,8 @@
-import { xurl } from "@signals";
-import type { RPCFile } from "../connect/RPCFiles.ts";
+// import { xurl } from "@signals";
+import type { RPCFile } from "../connect/RPCFile.ts";
 
 export function wrapLines(sourceCode: string): string {
-    const lineNumber = xurl.line || 1
+    const lineNumber = 1 //xurl.line || 1
 
     return sourceCode.split("\n").map((str, idx) =>
         `<div data-line=${idx + 1} id="line-${idx + 1}" class="${idx === lineNumber - 1 ? 'selected' : ''}"><span data-line=${idx + 1}>${str

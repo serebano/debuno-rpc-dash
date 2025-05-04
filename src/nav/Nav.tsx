@@ -13,28 +13,6 @@ const mapping = computed(() => {
   );
 });
 
-interface Endpoint {
-  endpoint: string;
-  path: string;
-  id: string;
-  files: Record<string, string>;
-}
-
-// const endpoints = computed<Record<string, Endpoint>>(() => {
-//   return Object.fromEntries(connect.instances.value.map((instance) => {
-//     return [instance.endpoint, {
-//       endpoint: instance.endpoint,
-//       id: instance.endpoint.replace("://", ":"),
-//       path: instance.path,
-//       files: Object.fromEntries(
-//         connect.filesMap.get(instance)!.value.map((
-//           file,
-//         ) => [file.http.replace("://", ":"), file.http]),
-//       ),
-//     }];
-//   }));
-// });
-
 export default function Nav() {
   const containerRef = useRef<HTMLDivElement>(null);
 

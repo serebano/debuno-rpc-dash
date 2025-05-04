@@ -19,7 +19,7 @@ function FileInfo() {
       </div>
 
       <div>
-        <div class="summary">Original</div>
+        <div class="summary">Source Path</div>
         <a
           href={`#`}
           onClick={(e) => {
@@ -89,12 +89,8 @@ function FileInfo() {
 }
 
 export function InfoPanel() {
-  if (!connect.infoView.value) {
-    return;
-  }
   return (
     <div id="infopanel">
-      <div class="separator"></div>
       {/* <div class="title">Info</div> */}
       <div class="content">
         <FileInfo />

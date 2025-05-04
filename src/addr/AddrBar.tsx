@@ -44,32 +44,20 @@ export function AddrBar() {
   const file = connect.file.value;
   const inputRef = useFocusHotKey();
 
-  useHotKey("cmd+i", () => {
-    connect.infoView.value = !connect.infoView.value;
-  }, { preventDefault: true });
-
-  useHotKey("cmd+.", () => {
-    connect.infoView.value = !connect.infoView.value;
-  }, { preventDefault: true });
-
-  useHotKey(`cmd+\\`, () => {
-    connect.splitView.value = !connect.splitView.value;
-    console.log("cmd+|", connect.splitView.value);
-  }, { preventDefault: true });
-
   useHotKey("cmd+r", () => {
     connect.reload();
   }, { preventDefault: true });
 
-  useHotKey("cmd+'", () => {
+  useHotKey("cmd+i", () => {
+    const url = localStorage.getItem("rpc:url");
+    location.hash = url ?? "";
+  }, { preventDefault: true });
+
+  useHotKey("cmd+g", () => {
     location.hash = "guide";
   }, { preventDefault: true });
 
-  useHotKey("cmd+,", () => {
-    location.hash = "about";
-  }, { preventDefault: true });
-
-  useHotKey("cmd+/", () => {
+  useHotKey("cmd+h", () => {
     location.hash = "";
   }, { preventDefault: true });
 

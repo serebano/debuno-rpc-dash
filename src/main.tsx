@@ -12,7 +12,7 @@ Object.assign(globalThis, { utils });
 function Main() {
   const url = connect.url.value;
   const Page = url in pages ? pages[url as keyof typeof pages] : App;
-
+  // return <Page />;
   return (
     <>
       <AddrBar />
@@ -41,6 +41,7 @@ render(<Main />, document.querySelector("#rpcapp")!);
 
 if (import.meta.hot) {
   // await connect.restore();
+  connect.reload();
 
   import.meta.hot.dispose(() => {
     connect.close();

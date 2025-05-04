@@ -201,9 +201,12 @@ connect.splitView = signal(false)
 connect.preview = signal(false)
 connect.previewFile = signal<RPCFile | undefined>()
 connect.infoView = signal(false)
+connect.terminalPanel = signal(false)
+connect.explorerPanel = signal(true)
+
 connect.sidePanelWidth = signal(350)
 connect.reload = debounce(() => {
-    const currentHash = location.hash.slice(1);
+    const currentHash = connect.url.value //location.hash.slice(1);
     connect.url.value = "*";
     setTimeout(() => {
         connect.url.value = currentHash;

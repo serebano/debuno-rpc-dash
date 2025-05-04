@@ -1,6 +1,5 @@
 .addrbar {
-  position: absolute;
-  top: 0px;
+  position: relative;
   z-index: 10;
   height: 56px;
   width: 100%;
@@ -79,7 +78,8 @@
   height: 28px;
 }
 .input-icons-start a.active {
-  background: rgb(101 157 247);
+  background: rgba(255, 255, 255, 0.1);
+  /* rgb(101 157 247); */
   /* rgba(79, 134, 247); */
 }
 .input-icons-start a.active i {
