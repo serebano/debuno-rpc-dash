@@ -1,10 +1,8 @@
 import "./style.css";
 import EditorBody from "./EditorBody.tsx";
 import { connect } from "@connect";
-import { signal } from "@preact/signals";
-import { Panels } from "../components/Panels.tsx";
-import { useEffect, useRef } from "preact/hooks";
 import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
+import CodIcon from "../codicon/CodIcon.tsx";
 
 function HTMLView() {
   if (!connect.previewFile.value) {
@@ -16,9 +14,11 @@ function HTMLView() {
   }
   return (
     <div style="width:100%;height:100%">
-      <div>
+      {
+        /* <div>
         {connect.previewFile.value?.http} ({connect.previewFile.value?.version})
-      </div>
+      </div> */
+      }
       <iframe
         src={connect.previewFile.value?.http}
         width="100%"
@@ -31,82 +31,92 @@ function HTMLView() {
   );
 }
 
-OriginalPanel.hotkey = "cmd+o";
-OriginalPanel.size = signal(400);
-OriginalPanel.enabled = signal(true);
-export function OriginalPanel() {
-  return <EditorBody source="original" />;
-}
-
-GeneratedPanel.hotkey = "cmd+\\";
-GeneratedPanel.size = signal(400);
-GeneratedPanel.enabled = signal(true);
-export function GeneratedPanel() {
-  return <EditorBody source="generated" />;
-}
-
-PreviewPanel.hotkey = "cmd+p";
-PreviewPanel.size = signal(0);
-PreviewPanel.enabled = signal(true);
-PreviewPanel.toggle = () => {
-  const comp = PreviewPanel;
-  if (comp.enabled.value === true) {
-    if (comp.size.value === 0) {
-      comp.size.value = 100;
-    }
-  }
-};
-export function PreviewPanel() {
-  return <HTMLView />;
-}
-
-EditorPanel.hotkey = "cmd+e";
-EditorPanel.enabled = signal(true);
-EditorPanel.size = signal(300);
-// EditorPanel.size.subscribe((size) => console.warn(`Editor size`, size));
-
-export function EditorPanel() {
-  const comp = EditorPanel;
-  useEffect(() => {
-    console.log(`EditorPanel size`, comp.enabled.value, comp.size.value);
-  }, [comp.enabled.value, comp.size.value]);
-
-  return (
-    <Panels
-      // size={comp.size}
-      type="row"
-      panels={[
-        OriginalPanel,
-        GeneratedPanel,
-        PreviewPanel,
-      ]}
-    />
-  );
-}
-
 export function EditorPanelGroup() {
-  const showGeneratedPanel = connect.splitView.value;
-  const showPreviewPanel = connect.preview.value;
+  const panels = connect.panels;
+  const originalSource = connect.file.value?.sources?.original;
+  const generatedSource = connect.file.value?.sources?.generated;
+  const previewFile = connect.previewFile.value;
+  const dirname = connect.instance.value?.dirname;
+  // const appdir = dirname?.split("/").pop()!;
+
+  const relativePath = (absolutePath: string) =>
+    dirname && absolutePath && absolutePath.startsWith(dirname)
+      ? absolutePath.replace(dirname, "file:/")
+      : absolutePath;
 
   return (
     <PanelGroup autoSaveId="rpc:editor" direction="horizontal">
       <Panel id="original" order={1}>
-        <EditorBody source="original" />
+        <div class="panel-container">
+          <div class="panel-header">
+            <a
+              onClick={(e) => {
+                e.preventDefault();
+                connect.file.value?.open({
+                  type: "src",
+                  format: connect.file.value.lang === "javascript"
+                    ? "js"
+                    : "ts",
+                });
+              }}
+            >
+              {relativePath(originalSource?.path!)}
+            </a>
+          </div>
+          <EditorBody source="original" />
+        </div>
       </Panel>
-      {showGeneratedPanel && (
+      {panels.generated && generatedSource && (
         <>
           <PanelResizeHandle class="col-resize-handler" />
-
           <Panel id="generated" order={2}>
-            <EditorBody source="generated" />
+            <div class="panel-container">
+              <div class="panel-header">
+                <a
+                  onClick={(e) => {
+                    e.preventDefault();
+                    connect.file.value?.open({
+                      type: "gen",
+                      format: connect.file.value.lang === "javascript"
+                        ? "js"
+                        : "ts",
+                    });
+                  }}
+                >
+                  {relativePath(generatedSource.path)}
+                </a>
+                <a
+                  onClick={(e) => {
+                    e.preventDefault();
+                    panels.generated = false;
+                  }}
+                >
+                  <CodIcon name="close" />
+                </a>
+              </div>
+              <EditorBody source="generated" />
+            </div>
           </Panel>
         </>
       )}
-      {showPreviewPanel && (
+      {panels.preview && (
         <>
           <PanelResizeHandle class="col-resize-handler" />
           <Panel id="preview" order={3}>
-            <HTMLView />
+            <div class="panel-container">
+              <div class="panel-header">
+                <a href={`#${previewFile?.http}`}>{previewFile?.http}</a>
+                <a
+                  onClick={(e) => {
+                    e.preventDefault();
+                    panels.preview = false;
+                  }}
+                >
+                  <CodIcon name="close" />
+                </a>
+              </div>
+              <HTMLView />
+            </div>
           </Panel>
         </>
       )}

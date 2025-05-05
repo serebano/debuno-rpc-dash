@@ -4,7 +4,6 @@ import CodIcon from "../codicon/CodIcon.tsx";
 import { connect } from "@connect";
 import { editFallback, getLangFromExt } from "@connect/utils.ts";
 import { useFocusHotKey } from "../hooks/useFocusHotKey.ts";
-import { useHotKey } from "../hooks/useHotKey.ts";
 
 function FileLang() {
   return connect.file.value?.http &&
@@ -44,23 +43,6 @@ export function AddrBar() {
   const file = connect.file.value;
   const inputRef = useFocusHotKey();
 
-  useHotKey("cmd+r", () => {
-    connect.reload();
-  }, { preventDefault: true });
-
-  useHotKey("cmd+i", () => {
-    const url = localStorage.getItem("rpc:url");
-    location.hash = url ?? "";
-  }, { preventDefault: true });
-
-  useHotKey("cmd+g", () => {
-    location.hash = "guide";
-  }, { preventDefault: true });
-
-  useHotKey("cmd+h", () => {
-    location.hash = "";
-  }, { preventDefault: true });
-
   return (
     <div class="addrbar">
       <form
@@ -90,10 +72,9 @@ export function AddrBar() {
         <div style="width:8px"></div>
         <div class="input-icons-start">
           <a
-            class={connect.infoView.value ? `active` : ``}
+            class={connect.panels.info ? `active` : ``}
             onClick={() => {
-              connect.infoView.value = !connect.infoView.value;
-              console.log({ info: connect.file.value });
+              connect.panels.info = !connect.panels.info;
             }}
           >
             <CodIcon name="info" size={iconSize} />
@@ -132,9 +113,9 @@ export function AddrBar() {
         {hasGenerated
           ? (
             <a
-              class={`${connect.splitView.value ? "active" : ""}`}
+              class={`${connect.panels.generated ? "active" : ""}`}
               onClick={() => {
-                connect.splitView.value = !connect.splitView.value;
+                connect.panels.generated = !connect.panels.generated;
               }}
             >
               <CodIcon name="open-preview" size={iconSize} />
@@ -144,31 +125,25 @@ export function AddrBar() {
         {isHTML
           ? (
             <a
-              class={`${connect.preview.value ? "active" : ""}`}
+              class={`${connect.panels.preview ? "active" : ""}`}
               onClick={() => {
-                connect.preview.value = !connect.preview.value;
-
-                if (connect.preview.value === true) {
-                  connect.previewFile.value = connect.file.value;
-                } else {
-                  connect.previewFile.value = undefined;
-                }
+                connect.panels.preview = !connect.panels.preview;
               }}
             >
               <CodIcon name="preview" size={iconSize} />
             </a>
           )
           : null}
-        {connect.instance.value?.path || connect.file.value?.file
+        {connect.instance.value?.dirname || connect.file.value?.file
           ? (
             <a
               title={`Edit ${
-                connect.file.value?.file! || connect.instance.value?.path!
+                connect.file.value?.file! || connect.instance.value?.dirname!
               }`}
               onClick={(e) => {
                 e.preventDefault();
                 editFallback(
-                  connect.file.value?.file! || connect.instance.value?.path!,
+                  connect.file.value?.file! || connect.instance.value?.dirname!,
                 );
               }}
             >

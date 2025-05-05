@@ -212,7 +212,7 @@ function ensureSlash(path: string): string {
 }
 
 function getVSCodeURI(filePath?: string, line?: number, column?: number) {
-    const uri = `vscode://file${(filePath || connect.file.value?.file || connect.instance.value?.path)?.replace('file://', '')}`
+    const uri = `vscode://file${(filePath || connect.file.value?.file || connect.instance.value?.dirname)?.replace('file://', '')}`
     return new URL([uri, line, column].filter(Boolean).join(':')).href
 
     // return `vscode://file${(filePath || connect.file.value?.file || connect.instance.value?.path)?.replace('file://', '')}`

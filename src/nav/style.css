@@ -106,6 +106,14 @@ a:hover {
 .nav li ul {
   padding-left: 1em;
 }
+
+.nav .dirname {
+  font-size: 11px;
+  opacity: 0.5;
+}
+.nav .dirname a:hover {
+  color: white;
+}
 .nav li.selected,
 .nav li.code-hint {
   background-color: rgb(40, 44, 52);

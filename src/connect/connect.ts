@@ -6,7 +6,7 @@ import { RPCFiles } from './RPCFiles.ts'
 import { debounce } from "./utils.ts";
 import config from "@config";
 import pages from "../pages/index.ts";
-import { preview } from "vite";
+import { Signals } from "./Signals.ts";
 
 connect.e = new EventTarget
 connect.eventNames = [] as string[]
@@ -127,9 +127,16 @@ const onUrlChange = async (url: string) => {
     }
 }
 
+connect.panels = new class Panels extends Signals {
+    explorer = true
+    info = false
+    source = true
+    generated = false
+    preview = false
+    terminal = false
+}
 
 connect.init = () => {
-
     const setHistory = debounce(() => {
         connect.history.value = JSON.parse(
             localStorage.getItem("endpoints") || "[]",
@@ -219,6 +226,8 @@ let closedFilePath: string | undefined
 let closedPreviewFilePath: string | undefined
 
 
+
+
 function connect(input: number | string): RPCClient {
     const instance = new RPCClient(input, {
         onCreated(instance) {
@@ -246,7 +255,7 @@ function connect(input: number | string): RPCClient {
             instance.on("close", (e) => {
                 if (e.data === 'INSTANCE_STOPPED') {
                     if (connect.instance.value?.endpoint === instance.endpoint) {
-                        closedInstancePath = connect.instance.value.path
+                        closedInstancePath = connect.instance.value.dirname
                         closedFilePath = connect.file.value?.file
                         closedPreviewFilePath = connect.previewFile.value?.file
 
@@ -280,7 +289,7 @@ function connect(input: number | string): RPCClient {
                     console.log({ filesSignal, filesArray, instance })
                 }
 
-                if (closedInstancePath && closedInstancePath === instance.path) {
+                if (closedInstancePath && closedInstancePath === instance.dirname) {
                     const file = filesArray.find(file => file.file === closedFilePath)
                     const previewFile = filesArray.find(file => file.file === closedPreviewFilePath)
 
@@ -366,6 +375,54 @@ function connect(input: number | string): RPCClient {
     return instance
 }
 
+const panels = connect.panels
+connect.hotkeys = {
+    "cmd+r": () => {
+        connect.reload();
+    },
+
+    "cmd+i": () => {
+        const url = localStorage.getItem("rpc:url");
+        location.hash = url ?? "";
+    },
+
+    "cmd+g": () => {
+        location.hash = "guide";
+    },
+
+    "cmd+h": () => {
+        location.hash = "";
+    },
+
+    "cmd+.": () => {
+        panels.info = !panels.info;
+    },
+
+    "cmd+\\": () => {
+        if (connect.file.value?.http.endsWith(".html")) {
+            panels.preview = !panels.preview;
+            if (panels.preview === true) {
+                connect.previewFile.value = connect.file.value;
+            } else {
+                connect.previewFile.value = undefined;
+            }
+        } else {
+            panels.generated = !panels.generated;
+        }
+    },
+
+    "cmd+'": () => {
+        panels.preview = !panels.preview;
+    },
+
+    "cmd+;": () => {
+        panels.terminal = !panels.terminal;
+    },
+
+    "cmd+e": () => {
+        panels.explorer = !panels.explorer;
+    }
+}
 
 Object.assign(globalThis, { connect, RPCClient, RPCFile, RPCFiles })
 

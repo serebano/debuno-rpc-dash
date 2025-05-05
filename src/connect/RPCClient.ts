@@ -84,7 +84,7 @@ class RPCClient extends EventSource {
 	#eventNames: string[] = [];
 	#eventsReceived: Record<string, boolean> = {}
 
-	path!: string;
+	dirname!: string;
 	base!: string;
 	endpoint!: string;
 	filename?: string;
@@ -137,7 +137,7 @@ class RPCClient extends EventSource {
 		super(resolved.endpoint, eventSourceInitDict)
 		RPCClient.instances.set(resolved.endpoint, this)
 
-		this.path = resolved.path || ''
+		this.dirname = resolved.path || ''
 		this.base = resolved.base || ''
 		this.runtime = resolved.runtime || ''
 		this.endpoint = resolved.endpoint
@@ -206,8 +206,8 @@ class RPCClient extends EventSource {
 
 			if (state.state === "updated") {
 				const instance = RPCClient.instances.get(state.endpoint)!;
-				if (state.path !== instance.path) {
-					instance.path = state.path;
+				if (state.path !== instance.dirname) {
+					instance.dirname = state.path;
 					instance.emit('update')
 				}
 				return;

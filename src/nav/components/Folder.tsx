@@ -5,6 +5,7 @@ import DotIcon from "../../icons/DotIcon.tsx";
 import { details } from "../state.ts";
 import { computed } from "@preact/signals";
 import { connect } from "@connect";
+import { editFallback } from "@connect/utils.ts";
 // import origins from "@signals/origins.ts";
 
 // globalThis.details = details;
@@ -111,6 +112,20 @@ export function Folder(
           </div>
           {isBase ? dot(key) : ""}
         </summary>
+        {isBase && connect.instance.value?.endpoint === name && (
+          <>
+            <div class="dirname">
+              <a
+                onClick={(e) => {
+                  e.preventDefault();
+                  editFallback(connect.instance.value?.dirname!);
+                }}
+              >
+                {connect.instance.value.dirname}
+              </a>
+            </div>
+          </>
+        )}
         <TreeView
           node={node}
           parentName={parentName + "/" + name}

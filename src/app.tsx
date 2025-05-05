@@ -5,47 +5,34 @@ import { InfoPanel } from "./infopanel/InfoPanel.tsx";
 import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
 import { useHotKey } from "./hooks/useHotKey.ts";
 import { connect } from "@connect/connect.ts";
+import { useScreenSize } from "./hooks/useScreenSize.ts";
 
 function TerminalPanel() {
   return <div class="centered">Terminal</div>;
 }
 
 export function App() {
-  useHotKey("cmd+.", () => {
-    connect.infoView.value = !connect.infoView.value;
-  }, { preventDefault: true });
-
-  useHotKey(`cmd+\\`, () => {
-    connect.splitView.value = !connect.splitView.value;
-  }, { preventDefault: true });
-
-  useHotKey(`cmd+'`, () => {
-    connect.preview.value = !connect.preview.value;
-  }, { preventDefault: true });
-
-  useHotKey(`cmd+;`, () => {
-    connect.terminalPanel.value = !connect.terminalPanel.value;
-  }, { preventDefault: true });
-
-  useHotKey(`cmd+e`, () => {
-    connect.explorerPanel.value = !connect.explorerPanel.value;
-    console.log("connect.explorerPanel.value", connect.explorerPanel.value);
-  }, { preventDefault: true });
-
-  const showTerminalPanel = connect.terminalPanel.value;
-  const showInfoPanel = connect.infoView.value;
-  const showExplorerPanel = connect.explorerPanel.value;
+  const panels = connect.panels;
+  const screenSize = useScreenSize();
+  const minSizePixels = 250;
+  const minSizePercentage = minSizePixels / screenSize.width * 100;
 
   return (
     <PanelGroup autoSaveId="rpc:layout" direction="horizontal">
-      {showExplorerPanel && (
+      {panels.explorer && (
         <>
-          <Panel id="explorer" order={1} defaultSize={20} minSize={20}>
+          <Panel
+            id="explorer"
+            order={1}
+            defaultSize={minSizePercentage}
+            minSize={minSizePercentage}
+            maxSize={50}
+          >
             <PanelGroup autoSaveId="rpc:explorer" direction="vertical">
               <Panel id="nav" order={1}>
                 <Nav />
               </Panel>
-              {showInfoPanel && (
+              {panels.info && (
                 <>
                   <PanelResizeHandle class="row-resize-handler" />
                   <Panel id="info" order={2}>
@@ -63,7 +50,7 @@ export function App() {
           <Panel id="editor" order={1}>
             <EditorPanelGroup />
           </Panel>
-          {showTerminalPanel && (
+          {panels.terminal && (
             <>
               <PanelResizeHandle class="row-resize-handler" />
               <Panel id="terminal" order={2} defaultSize={30} minSize={20}>

@@ -6,13 +6,20 @@ import { connect } from "@connect";
 import pages from "./pages/index.ts";
 import { AddrBar } from "./addr/AddrBar.tsx";
 import { StatusBar } from "./statusbar/StatusBar.tsx";
+import { useHotKey } from "./hooks/useHotKey.ts";
 
 Object.assign(globalThis, { utils });
 
 function Main() {
   const url = connect.url.value;
   const Page = url in pages ? pages[url as keyof typeof pages] : App;
-  // return <Page />;
+
+  for (const [hotkey, cb] of Object.entries(connect.hotkeys)) {
+    useHotKey(hotkey, cb, {
+      preventDefault: true,
+    });
+  }
+
   return (
     <>
       <AddrBar />

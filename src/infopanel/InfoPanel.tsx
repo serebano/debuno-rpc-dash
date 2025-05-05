@@ -3,6 +3,15 @@ import { connect } from "@connect/connect.ts";
 
 function FileInfo() {
   const file = connect.file.value;
+  const dirname = connect.instance.value?.dirname;
+  const endpoint = connect.instance.value?.endpoint;
+
+  // const appdir = dirname?.split("/").pop()!;
+
+  const relativePath = (absolutePath: string) =>
+    dirname && absolutePath.startsWith(dirname)
+      ? absolutePath.replace(dirname, "")
+      : absolutePath;
 
   return (
     <>
@@ -11,6 +20,16 @@ function FileInfo() {
         <div style="font-size:11px">
           {file?.timestamp ? new Date(file?.timestamp).toLocaleString() : ""}
         </div>
+      </div>
+
+      <div>
+        <div class="summary">Dirname</div>
+        {dirname}
+      </div>
+
+      <div>
+        <div class="summary">Endpoint</div>
+        {endpoint}
       </div>
 
       <div>
@@ -27,7 +46,7 @@ function FileInfo() {
             file?.open();
           }}
         >
-          {file?.sources?.original.path}
+          {relativePath(file?.sources?.original.path!)}
         </a>
       </div>
 
@@ -43,7 +62,7 @@ function FileInfo() {
                 file?.open({ type: "gen" });
               }}
             >
-              {file?.sources?.generated.path}
+              {relativePath(file?.sources?.generated.path)}
             </a>
           </div>
         )
@@ -77,13 +96,12 @@ function FileInfo() {
           </details>
         )
         : null}
-      {
-        /* <div>
+
+      <div>
         <pre>
         {JSON.stringify(file, null, 4)}
         </pre>
-      </div> */
-      }
+      </div>
     </>
   );
 }
