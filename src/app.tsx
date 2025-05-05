@@ -22,20 +22,20 @@ export function App() {
       {panels.explorer && (
         <>
           <Panel
-            id="explorer"
+            id="panel-explorer"
             order={1}
             defaultSize={minSizePercentage}
             minSize={minSizePercentage}
             maxSize={50}
           >
             <PanelGroup autoSaveId="rpc:explorer" direction="vertical">
-              <Panel id="nav" order={1}>
+              <Panel id="panel-nav" order={1}>
                 <Nav />
               </Panel>
               {panels.info && (
                 <>
                   <PanelResizeHandle class="row-resize-handler" />
-                  <Panel id="info" order={2}>
+                  <Panel id="panel-info" order={2}>
                     <InfoPanel />
                   </Panel>
                 </>
@@ -47,13 +47,18 @@ export function App() {
       )}
       <Panel id="body" order={2}>
         <PanelGroup autoSaveId="rpc:body" direction="vertical">
-          <Panel id="editor" order={1}>
+          <Panel id="panel-editor" order={1}>
             <EditorPanelGroup />
           </Panel>
           {panels.terminal && (
             <>
               <PanelResizeHandle class="row-resize-handler" />
-              <Panel id="terminal" order={2} defaultSize={30} minSize={20}>
+              <Panel
+                id="panel-terminal"
+                order={2}
+                defaultSize={30}
+                minSize={20}
+              >
                 <TerminalPanel />
               </Panel>
             </>

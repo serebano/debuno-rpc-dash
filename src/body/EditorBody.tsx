@@ -15,7 +15,7 @@ export default function EditorBody(
     "";
 
   if (!connect.file.value) {
-    return <div style="padding:16px;font-size:16px">No file selected</div>;
+    return <div class="centered">No file selected</div>;
   }
 
   if (connect.file.value.error) {
@@ -27,7 +27,7 @@ export default function EditorBody(
   }
 
   const highlightedCode = hljs.highlight(sourceCode, {
-    language: getFileExtension(connect.url.value) ?? "json",
+    language: getFileExtension(connect.file.value.path) ?? "json",
   }).value;
 
   let codeMask = sourceCode;

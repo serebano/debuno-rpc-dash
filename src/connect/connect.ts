@@ -112,11 +112,16 @@ const onUrlChange = async (url: string) => {
             await instance.ready
             localStorage.setItem("rpc:url", url);
             if (!instance.filename) {
-                file.value = undefined
+                const indexHtmlFile = instance.files.get('index.html')
+                connect.previewFile.value = undefined
+                connect.file.value = connect.previewFile.value = await indexHtmlFile?.fetch()
+            } else if (instance.filename === 'index.html') {
+                connect.previewFile.value = undefined
+                connect.previewFile.value = instance.files.get('index.html')
             }
         } catch (e: any) {
             console.warn(`(onUrlChange) connect(${url}) => failed`, e);
-            file.value = {
+            connect.file.value = {
                 error: {
                     inputUrl: url,
                     resolvedUrl: instance.url,
@@ -436,10 +441,17 @@ connect.hotkeys = {
     },
 
     "cmd+o": async () => {
-        const indexHtmlFile = connect.files.value.find(file => file.path === 'index.html')
+        if (panels.preview === true && connect.previewFile.value) {
+            panels.preview = false
+            return
+        }
+        const indexHtmlFile = connect.instance.value?.files.get('index.html')
         if (indexHtmlFile) {
             connect.previewFile.value = await indexHtmlFile.fetch()
             panels.preview = true
+            if (!connect.file.value) {
+                location.hash = indexHtmlFile.http
+            }
         }
     },
 

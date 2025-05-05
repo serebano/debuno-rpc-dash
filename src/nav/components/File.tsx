@@ -5,8 +5,8 @@ import { useEffect } from "preact/hooks";
 import { connect } from "@connect/connect.ts";
 // import { xurl } from "@signals";
 
-export function File({ name, url, currentUrl }: FileProps) {
-  const isSelected = connect.url.value === url; // currentUrl?.startsWith(url);
+export function File({ name, url }: FileProps) {
+  const isSelected = connect.file.value?.http === url; // currentUrl?.startsWith(url);
   const [ref, scrollIntoView] = useScrollIntoViewIfNeeded<HTMLAnchorElement>();
 
   const onClick = (e: Event) => {

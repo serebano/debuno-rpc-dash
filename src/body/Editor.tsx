@@ -36,19 +36,12 @@ export function EditorPanelGroup() {
   const originalSource = connect.file.value?.sources?.original;
   const generatedSource = connect.file.value?.sources?.generated;
   const previewFile = connect.previewFile.value;
-  const dirname = connect.instance.value?.dirname;
-  // const appdir = dirname?.split("/").pop()!;
-
-  const relativePath = (absolutePath: string) =>
-    dirname && absolutePath && absolutePath.startsWith(dirname)
-      ? absolutePath.replace(dirname, "").slice(1)
-      : absolutePath;
 
   return (
     <PanelGroup autoSaveId="rpc:editor" direction="horizontal">
       {connect.file.value &&
         (
-          <Panel id="original" order={1}>
+          <Panel id="panel-original" order={1}>
             <div class="panel-container">
               <div class="panel-header">
                 <a
@@ -62,7 +55,7 @@ export function EditorPanelGroup() {
                     });
                   }}
                 >
-                  {relativePath(originalSource?.path!)}
+                  {originalSource?.path!}
                 </a>
               </div>
               <EditorBody source="original" />
@@ -72,7 +65,7 @@ export function EditorPanelGroup() {
       {panels.generated && generatedSource && (
         <>
           <PanelResizeHandle class="col-resize-handler" />
-          <Panel id="generated" order={2}>
+          <Panel id="panel-generated" order={2}>
             <div class="panel-container">
               <div class="panel-header">
                 <a
@@ -86,7 +79,7 @@ export function EditorPanelGroup() {
                     });
                   }}
                 >
-                  {relativePath(generatedSource.path)}
+                  {generatedSource.path}
                 </a>
                 <a
                   onClick={(e) => {
@@ -105,7 +98,7 @@ export function EditorPanelGroup() {
       {panels.preview && (
         <>
           <PanelResizeHandle class="col-resize-handler" />
-          <Panel id="preview" order={3}>
+          <Panel id="panel-preview" order={3}>
             <div class="panel-container">
               <div class="panel-header">
                 <a href={`#${previewFile?.http}`}>{previewFile?.http}</a>
