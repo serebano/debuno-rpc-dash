@@ -41,31 +41,34 @@ export function EditorPanelGroup() {
 
   const relativePath = (absolutePath: string) =>
     dirname && absolutePath && absolutePath.startsWith(dirname)
-      ? absolutePath.replace(dirname, "file:/")
+      ? absolutePath.replace(dirname, "").slice(1)
       : absolutePath;
 
   return (
     <PanelGroup autoSaveId="rpc:editor" direction="horizontal">
-      <Panel id="original" order={1}>
-        <div class="panel-container">
-          <div class="panel-header">
-            <a
-              onClick={(e) => {
-                e.preventDefault();
-                connect.file.value?.open({
-                  type: "src",
-                  format: connect.file.value.lang === "javascript"
-                    ? "js"
-                    : "ts",
-                });
-              }}
-            >
-              {relativePath(originalSource?.path!)}
-            </a>
-          </div>
-          <EditorBody source="original" />
-        </div>
-      </Panel>
+      {connect.file.value &&
+        (
+          <Panel id="original" order={1}>
+            <div class="panel-container">
+              <div class="panel-header">
+                <a
+                  onClick={(e) => {
+                    e.preventDefault();
+                    connect.file.value?.open({
+                      type: "src",
+                      format: connect.file.value.lang === "javascript"
+                        ? "js"
+                        : "ts",
+                    });
+                  }}
+                >
+                  {relativePath(originalSource?.path!)}
+                </a>
+              </div>
+              <EditorBody source="original" />
+            </div>
+          </Panel>
+        )}
       {panels.generated && generatedSource && (
         <>
           <PanelResizeHandle class="col-resize-handler" />

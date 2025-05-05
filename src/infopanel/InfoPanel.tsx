@@ -5,32 +5,48 @@ function FileInfo() {
   const file = connect.file.value;
   const dirname = connect.instance.value?.dirname;
   const endpoint = connect.instance.value?.endpoint;
+  const config = connect.instance.value?.config;
 
   // const appdir = dirname?.split("/").pop()!;
 
   const relativePath = (absolutePath: string) =>
-    dirname && absolutePath.startsWith(dirname)
+    dirname && absolutePath && absolutePath.startsWith(dirname)
       ? absolutePath.replace(dirname, "")
       : absolutePath;
 
   return (
     <>
-      <div>
-        Version {file?.version || 0}
-        <div style="font-size:11px">
-          {file?.timestamp ? new Date(file?.timestamp).toLocaleString() : ""}
+      <details open={!connect.file.value}>
+        <summary class="summary">App</summary>
+        <div class="content">
+          <div>
+            <div class="summary">Config</div>
+            {config}
+          </div>
+
+          <div>
+            <div class="summary">Dirname</div>
+            {dirname}
+          </div>
+
+          <div>
+            <div class="summary">Endpoint</div>
+            {endpoint}
+          </div>
         </div>
-      </div>
+      </details>
 
-      <div>
-        <div class="summary">Dirname</div>
-        {dirname}
-      </div>
-
-      <div>
-        <div class="summary">Endpoint</div>
-        {endpoint}
-      </div>
+      {file?.version &&
+        (
+          <div>
+            Version {file?.version || 0}
+            <div style="font-size:11px">
+              {file?.timestamp
+                ? new Date(file?.timestamp).toLocaleString()
+                : ""}
+            </div>
+          </div>
+        )}
 
       <div>
         <div class="summary">URL</div>

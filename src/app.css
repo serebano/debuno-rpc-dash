@@ -83,7 +83,7 @@ a:hover {
 #nav a#vscode-uri {
   border-radius: 100px;
   position: fixed;
-  bottom: 10px;
+  bottom: 30px;
   left: 10px;
   z-index: 999999999;
   background: rgb(19, 21, 24);
@@ -113,17 +113,6 @@ a:hover {
 
 .editor {
   display: flex;
-}
-
-#statusbar {
-  background: rgb(33 37 43);
-  height: 24px;
-  width: 100%;
-  gap: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: start;
-  font-size: 11px;
 }
 
 .col-resize-handler {

@@ -127,15 +127,6 @@ const onUrlChange = async (url: string) => {
     }
 }
 
-connect.panels = new class Panels extends Signals {
-    explorer = true
-    info = false
-    source = true
-    generated = false
-    preview = false
-    terminal = false
-}
-
 connect.init = () => {
     const setHistory = debounce(() => {
         connect.history.value = JSON.parse(
@@ -241,11 +232,19 @@ function connect(input: number | string): RPCClient {
                 console.debug('   $open', e.target.isRestarting, e.target.endpoint, e.target.STATE[e.target.readyState])
                 connect.filesMap.set(instance, signal([]))
                 connect.instances.value = [...RPCClient.instances.values()]
+                if (connect.instance.value?.endpoint === instance.endpoint) {
+                    connect.instance.value = undefined
+                    connect.instance.value = instance
+                }
             })
 
             instance.on('error', (e) => {
                 console.debug('   $error', e.target.isRestarting, e.target.endpoint, e.target.STATE[e.target.readyState])
                 connect.instances.value = [...RPCClient.instances.values()]
+                if (connect.instance.value?.endpoint === instance.endpoint) {
+                    connect.instance.value = undefined
+                    connect.instance.value = instance
+                }
             })
 
             instance.on("restart", (e) => {
@@ -258,7 +257,8 @@ function connect(input: number | string): RPCClient {
                         closedInstancePath = connect.instance.value.dirname
                         closedFilePath = connect.file.value?.file
                         closedPreviewFilePath = connect.previewFile.value?.file
-
+                        connect.instance.value = undefined
+                        connect.instance.value = instance
                     }
                 }
 
@@ -375,7 +375,31 @@ function connect(input: number | string): RPCClient {
     return instance
 }
 
-const panels = connect.panels
+
+class Panels extends Signals {
+    explorer = true
+    info = false
+    source = true
+    generated = false
+    preview = false
+    terminal = false
+    constructor() {
+        super()
+        try {
+            Object.assign(this, JSON.parse(localStorage.getItem('rpc:panels') || '{}'))
+        } catch { }
+
+        this.effect(panels => {
+            const json = JSON.stringify(panels)
+            console.log(json)
+            localStorage.setItem('rpc:panels', json)
+        })
+    }
+}
+
+
+const panels = connect.panels = new Panels
+
 connect.hotkeys = {
     "cmd+r": () => {
         connect.reload();
@@ -408,6 +432,14 @@ connect.hotkeys = {
             }
         } else {
             panels.generated = !panels.generated;
+        }
+    },
+
+    "cmd+o": async () => {
+        const indexHtmlFile = connect.files.value.find(file => file.path === 'index.html')
+        if (indexHtmlFile) {
+            connect.previewFile.value = await indexHtmlFile.fetch()
+            panels.preview = true
         }
     },
 

@@ -1,0 +1,16 @@
+#statusbar {
+  background: rgb(33 37 43);
+  height: 24px;
+  width: 100%;
+  gap: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: start;
+  font-size: 11px;
+}
+#statusbar a {
+  display: block;
+}
+#statusbar a:hover {
+  color: white !important;
+}

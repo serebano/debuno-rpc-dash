@@ -91,6 +91,9 @@ export function Folder(
   const isBase = depth === 0; //origins.peek().includes(key + "/");
   const d = details.peek();
 
+  const instance = isBase
+    ? connect.instances.value.find((i) => i.endpoint === name)
+    : undefined;
   return (
     <li data-depth={depth} class={!isBase ? "folder" : "folder_public"}>
       <details
@@ -107,21 +110,21 @@ export function Folder(
               : "label-container"}
           >
             <span class="label" title={name}>
-              {isBase ? name.split("://").pop() : name}
+              {isBase ? name.split("://").pop()?.slice(0, -1) : name}
             </span>
           </div>
           {isBase ? dot(key) : ""}
         </summary>
-        {isBase && connect.instance.value?.endpoint === name && (
+        {instance && (
           <>
             <div class="dirname">
               <a
                 onClick={(e) => {
                   e.preventDefault();
-                  editFallback(connect.instance.value?.dirname!);
+                  editFallback(instance.dirname);
                 }}
               >
-                {connect.instance.value.dirname}
+                {instance.dirname}
               </a>
             </div>
           </>

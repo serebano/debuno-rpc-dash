@@ -1,6 +1,6 @@
 {
   "name": "@debuno/rpc-dash",
-  "version": "0.7.5",
+  "version": "0.7.6",
   "displayName": "Debuno RPC Inspector",
   "description": "Debuno RPC Inspector",
   "exports": {

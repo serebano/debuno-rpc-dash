@@ -66,10 +66,11 @@ class RPCClient extends EventSource {
 			url: entries['x-url'],
 			root: endpoint === entries['x-endpoint'],
 			base: entries['x-base'],
-			path: entries['x-path'],
 			host: entries['x-host'],
 			port: entries['x-port'],
 			runtime: entries['x-runtime'],
+			dirname: entries['x-dirname'],
+			config: entries['x-config'],
 			endpoint: entries['x-endpoint'],
 			filename: entries['x-filename'],
 			hostname: entries['x-hostname'],
@@ -84,9 +85,10 @@ class RPCClient extends EventSource {
 	#eventNames: string[] = [];
 	#eventsReceived: Record<string, boolean> = {}
 
-	dirname!: string;
-	base!: string;
 	endpoint!: string;
+	dirname!: string;
+	config!: string;
+	base!: string;
 	filename?: string;
 	runtime!: string;
 
@@ -137,10 +139,12 @@ class RPCClient extends EventSource {
 		super(resolved.endpoint, eventSourceInitDict)
 		RPCClient.instances.set(resolved.endpoint, this)
 
-		this.dirname = resolved.path || ''
+		this.endpoint = resolved.endpoint
+		this.dirname = resolved.dirname || ''
+		this.config = resolved.config || ''
+
 		this.base = resolved.base || ''
 		this.runtime = resolved.runtime || ''
-		this.endpoint = resolved.endpoint
 		this.filename = resolved.filename
 
 		const emitFiles = debounce(() => {
